@@ -1,0 +1,29 @@
+snippet type
+	type ${1:Struct} struct {
+		${2:field} ${3:_type}
+	}
+snippet types
+	type (
+		${1:Struct} struct {
+			${2:field} ${3:_type}
+		}
+	)
+snippet fun
+	func ${1:name}(${2:params}) (${3:return}) {
+		${0:$VISUAL}
+	}
+snippet method
+	func (${1:s} ${2:*Struct}) ${3:name}(${4:params}) (${5:return}) {
+		${0:$VISUAL}
+	}
+snippet print
+	fmt.Println(${1:var})
+snippet for
+	for ${1:i} := 0; ${1} < ${2}; ${1}++ {
+		${0:$VISUAL}
+	}
+snippet range
+	for ${1:idx}, ${2:item} := range ${3:list} {
+		${0:$VISUAL}
+	}
+

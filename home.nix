@@ -17,6 +17,14 @@
   # plain files is through 'home.file'.
   home.file = { };
 
+
+  #Loading snippets files and set as text expression
+  # readDir -> return set,  create new set with map iteration.
+  xdg.configFile =
+    (lib.mapAttrs'
+      (name: type: lib.nameValuePair "nvim/snippets/${name}" { text = (builtins.readFile ./snippets/${name}); })
+      (builtins.readDir ./snippets));
+
   # You can also manage environment variables but you will have to manually
   # source
   #
@@ -164,12 +172,17 @@
       plenary-nvim
       gruvbox-material
       fern-vim
+
+      #snippet
+      nvim-snippy
+
       #cmp
       nvim-cmp
       cmp-nvim-lsp
       cmp-buffer
       cmp-path
       cmp-cmdline
+      cmp-snippy
 
       # lsp
       nvim-lspconfig
