@@ -102,6 +102,18 @@ vim.opt.completeopt = "menu,menuone,noselect"
 
 vim.cmd [[ autocmd BufWritePost <buffer> lua vim.lsp.buf.format() ]]
 
+require('snippy').setup({
+  mappings = {
+    is = {
+      ['<Tab>'] = 'expand_or_advance',
+      ['<S-Tab>'] = 'previous',
+    },
+    nx = {
+      ['<leader>x'] = 'cut_text',
+    },
+  },
+})
+
 local cmp = require 'cmp'
 cmp.setup({
   formatting = {
@@ -116,7 +128,11 @@ cmp.setup({
       return vim_item
     end
   },
-  snippet = {},
+  snippet = {
+    expand = function(args)
+      require 'snippy'.expand_snippet(args.body)
+    end
+  },
   window = {
     completion = cmp.config.window.bordered({
       border = 'single'
@@ -135,10 +151,11 @@ cmp.setup({
     ['<CR>'] = cmp.mapping.confirm({ select = true }),
   }),
   sources = cmp.config.sources({
-    { name = 'nvim_lsp' },
+    { name = 'snippy' },
     { name = 'path' },
   }, {
-    { name = 'buffer', keyword_length = 2 },
+    { name = 'nvim_lsp', keyword_length = 3 },
+    { name = 'buffer',   keyword_length = 4 },
   })
 })
 
