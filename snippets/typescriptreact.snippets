@@ -1,0 +1,25 @@
+extends typescript
+
+snippet rfc "Create Functional React Component"
+	import { FC } from 'react';
+	const ${1:Component}: FC<${2:PropsType}> = ({${3:Props}}) => {
+		return (
+			<>
+				${0:$VISUAL}
+			</>
+		)
+	}
+snippet cternary "ternary operation inside component"
+	{
+		${1:condition}
+			? ${2:true}
+			: ${3:false}
+	}
+
+snippet useS "useState()"
+	const [${1:item}, set${1/\u&/g}] = useState<${3:type}>(${2:initialState})
+
+snippet useE "useEffect()"
+	useEffect(() => {
+		$0
+	}, [])
