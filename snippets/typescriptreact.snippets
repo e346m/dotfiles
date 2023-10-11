@@ -17,7 +17,7 @@ snippet cternary "ternary operation inside component"
 	}
 
 snippet useS "useState()"
-	const [${1:item}, set${1/\u&/g}] = useState<${3:type}>(${2:initialState})
+	const [${1:item}, set${1/.*/\u&/g}] = useState<${3:type}>(${2:initialState})
 
 snippet useE "useEffect()"
 	useEffect(() => {
