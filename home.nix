@@ -49,6 +49,7 @@
       path = "${config.xdg.dataHome}/zsh/.zsh_history";
       save = 1000000;
       size = 1000000;
+      share = true;
     };
     shellAliases = {
       grep = "grep --colour=auto";
@@ -67,7 +68,14 @@
           fi
       }
 
+      autoload -Uz add-zsh-hook
       autoload -Uz chpwd_recent_dirs cdr
+      add-zsh-hook chpwd chpwd_recent_dirs
+      chpwd_functions+=chpwd_recent_dirs
+      zstyle ':chpwd:*' recent-dirs-max 1000
+      zstyle ':chpwd:*' recent-dirs-default true
+      zstyle ':completion:*' recent-dirs-insert always
+
 
       zstyle ':completion:*' matcher-list 'm:{[:lower:]}={[:upper:]}'
 
