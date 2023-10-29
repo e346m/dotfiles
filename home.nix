@@ -11,6 +11,7 @@
   home.packages = with pkgs; [
     wl-clipboard # For tmux clipboard on the wayland system
     rnix-lsp
+    ripgrep
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -43,7 +44,7 @@
     enable = true;
     defaultKeymap = "emacs";
     dotDir = ".config/zsh";
-    enableSyntaxHighlighting = true;
+    syntaxHighlighting.enable = true;
     history = {
       extended = true;
       path = "${config.xdg.dataHome}/zsh/.zsh_history";
@@ -175,11 +176,13 @@
         p.json
         p.toml
       ]))
+
       nvim-lspconfig
       telescope-nvim
       plenary-nvim
       gruvbox-material
       fern-vim
+      nvim-lint
 
       #snippet
       nvim-snippy

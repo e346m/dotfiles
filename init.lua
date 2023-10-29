@@ -211,7 +211,8 @@ lspconfig.lua_ls.setup({
 })
 
 lspconfig.rnix.setup({})
-lspconfig.tsserver.setup({})
+lspconfig.tsserver.setup({
+})
 
 -- https://github.com/stevearc/conform.nvim/tree/master
 -- null-lsの代替みたいなを使って、formatしたほうがよいか？　go以外の言語をサポートする必要もあるし...
@@ -243,4 +244,20 @@ vim.api.nvim_create_autocmd("BufWritePre", {
     end
     vim.lsp.buf.format({ async = false })
   end
+})
+
+require('lint').linters_by_ft = {
+  javascript = { 'biomejs' },
+  typescript = { 'biomejs' },
+  javascriptreact = { 'biomejs' },
+  typescriptreact = { 'biomejs' },
+  json = { 'biomejs' },
+  jsx = { 'biomejs' },
+  tsx = { 'biomejs' },
+}
+
+vim.api.nvim_create_autocmd({ "BufWritePost" }, {
+  callback = function()
+    require("lint").try_lint()
+  end,
 })
