@@ -3,7 +3,6 @@
 
   home.username = "eiji";
   home.homeDirectory = "/home/eiji";
-
   home.stateVersion = "23.05"; # Please read the comment before changing.
 
   # The home.packages option allows you to install Nix packages into your
@@ -12,6 +11,9 @@
     wl-clipboard # For tmux clipboard on the wayland system
     rnix-lsp
     ripgrep
+    epson-escpr2
+    tree
+    jetbrains.idea-community
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -97,6 +99,9 @@
       init = {
         defaultBranch = "main";
       };
+      credential.helper = "${
+        pkgs.git.override { withLibsecret = true ;}
+      }/bin/git-credential-libsecret";
     };
     ignores = [
       "*.swp"
@@ -182,7 +187,9 @@
       plenary-nvim
       gruvbox-material
       fern-vim
+
       nvim-lint
+      conform-nvim
 
       #snippet
       nvim-snippy
@@ -195,8 +202,12 @@
       cmp-cmdline
       cmp-snippy
 
+
       # lsp
       nvim-lspconfig
+
+      #markdown
+      markdown-preview-nvim
     ];
     extraLuaConfig = lib.fileContents ./init.lua;
     extraPackages = with pkgs; [
@@ -205,6 +216,8 @@
       rnix-lsp
       gopls
       ccls
+      stylua
+      zls
     ];
   };
 
