@@ -42,6 +42,12 @@ vim.cmd([[autocmd FileType go set sw=4 sts=4 ts=4]])
 -- remove space
 vim.cmd([[ autocmd BufWritePre * :%s/\s\+$//ge ]])
 
+-- fold
+vim.opt.fillchars = { fold = " " }
+vim.opt.foldmethod = "indent"
+vim.opt.foldenable = false
+vim.opt.foldlevel = 99
+
 -- Key mappings
 
 --- nnoremap
