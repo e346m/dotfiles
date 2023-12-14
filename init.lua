@@ -48,6 +48,11 @@ vim.opt.foldmethod = "indent"
 vim.opt.foldenable = false
 vim.opt.foldlevel = 99
 
+-- blame
+vim.g.blamer_enabled = true
+vim.g.blamer_show_in_insert_modes = 0
+vim.g.blamer_prefix = " > "
+
 -- Key mappings
 
 --- nnoremap
@@ -295,6 +300,8 @@ require("conform").setup({
 		graphql = { { "biome", "prettierd", "prettier" } },
 	},
 })
+
+require("lspconfig").kotlin_language_server.setup({})
 
 -- LSPのフォーマッターも動いてるし、goに限ってはカスタムのフォーマットも作成しているし、どこかで整理する
 vim.api.nvim_create_autocmd("BufWritePre", {

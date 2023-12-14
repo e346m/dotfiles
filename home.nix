@@ -1,19 +1,19 @@
 { config, pkgs, lib, ... }:
 {
 
-  home.username = "eiji";
-  home.homeDirectory = "/home/eiji";
   home.stateVersion = "23.05"; # Please read the comment before changing.
 
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
     wl-clipboard # For tmux clipboard on the wayland system
+    gh
     rnix-lsp
     ripgrep
-    epson-escpr2
     tree
-    jetbrains.idea-community
+    old.jetbrains.idea-community
+    docker
+    google-cloud-sdk
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -47,6 +47,15 @@
   home.sessionVariables = {
     EDITOR = "nvim";
   };
+
+
+  programs.alacritty = {
+    enable = true;
+    settings = {
+    	font.size = 14;
+    };
+  };
+
 
   programs.zsh = {
     enable = true;
@@ -148,11 +157,21 @@
       # avoid copy-pipe conflict
       set -s set-clipboard off
 
-      set -s copy-command "wl-copy"
+      # For Linux
+      # if-shell -b "uname | grep -q Linux" {
+      #   set -s copy-command "wl-copy"
+      # }
+
+      # For mac
+      set -s copy-command "pbcopy"
+
       bind -T copy-mode-vi v send-keys -X begin-selection
 
       # support y yank
       bind -T copy-mode-vi y send-keys -X copy-pipe-and-cancel
+
+      # support y yank via mouse selection
+      bind -Tcopy-mode-vi MouseDragEnd1Pane send -X copy-pipe-and-cancel
 
 
       # mouse
@@ -214,6 +233,7 @@
 
       #markdown
       markdown-preview-nvim
+
     ];
     extraLuaConfig = lib.fileContents ./init.lua;
     extraPackages = with pkgs; [
@@ -224,6 +244,7 @@
       ccls
       stylua
       zls
+      kotlin-language-server
     ];
   };
 
