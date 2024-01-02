@@ -13,7 +13,8 @@
     tree
     old.jetbrains.idea-community
     docker
-    google-cloud-sdk
+    dbeaver
+    (google-cloud-sdk.withExtraComponents [google-cloud-sdk.components.gke-gcloud-auth-plugin])
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -54,6 +55,10 @@
     settings = {
     	font.size = 14;
     };
+  };
+
+  programs.fzf = {
+    enable = true;
   };
 
 
@@ -99,11 +104,40 @@
 
       #補完 メニューの選択モード
       zstyle ':completion:*:default' menu select=2
+      function _zf_reload() {
+        source ${config.xdg.configHome}/zsh/.zshrc
+      }
+
+      function _gcloud_change_project() {
+        local proj=$(gcloud config configurations list | fzf --header-lines=1 | awk '{print $1}')
+        if [ -n $proj ]; then
+          gcloud config configurations activate $proj
+          _zf_reload
+          return $?
+        fi
+      }
+      alias gcp=_gcloud_change_project
     '';
   };
 
   programs.starship = {
     enable = true;
+    settings = {
+      username = {
+        show_always = true;
+        format = "[$user]($style) ";
+      };
+      gcloud = {
+        symbol = "🇬️ ";
+        format = "on [$symbol$active]($style) ";
+        style = "bold yellow";
+      };
+      kubernetes = {
+        format = "on [$symbol$context\($namespace\)]($style) ";
+        style = "dimmed green";
+        disabled = false;
+      };
+    };
   };
 
   programs.git = {
@@ -158,12 +192,14 @@
       set -s set-clipboard off
 
       # For Linux
-      # if-shell -b "uname | grep -q Linux" {
-      #   set -s copy-command "wl-copy"
-      # }
+      if-shell -b "uname | grep -q Linux" {
+        set -s copy-command "wl-copy"
+      }
 
       # For mac
-      set -s copy-command "pbcopy"
+      if-shell -b "uname | grep -q Darwin" {
+        set -s copy-command "pbcopy"
+      }
 
       bind -T copy-mode-vi v send-keys -X begin-selection
 

@@ -20,17 +20,30 @@
         };
       in
       {
+# how to set permittedInsecurePackages?
+        nixpkgs.config = {
+          permittedInsecurePackages = [ "nodejs-16.20.2" ];
+        };
         homeConfigurations = {
           "eiji" = home-manager.lib.homeManagerConfiguration {
             inherit pkgs;
             modules = [
               ./home.nix
-            ];
+              {
+                home = {
+                  username = "eiji";
+                  homeDirectory = "/home/eiji";
                 };
+              }
+            ];
+          };
+
           "eijimishiro" = home-manager.lib.homeManagerConfiguration {
             pkgs = darwinPkgs;
             modules = [
-              ({ config, pkgs, ...}: { nixpkgs.overlays = [overlay-old]; })
+              ({ config, pkgs, ...}: {
+                nixpkgs.overlays = [overlay-old];
+              })
               ./home.nix
               {
                 home = {
