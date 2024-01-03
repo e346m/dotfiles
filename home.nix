@@ -14,6 +14,8 @@
     old.jetbrains.idea-community
     docker
     dbeaver
+    ethtool
+    wol
     (google-cloud-sdk.withExtraComponents [google-cloud-sdk.components.gke-gcloud-auth-plugin])
   ];
 

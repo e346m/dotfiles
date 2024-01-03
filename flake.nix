@@ -28,6 +28,9 @@
           "eiji" = home-manager.lib.homeManagerConfiguration {
             inherit pkgs;
             modules = [
+              ({ config, pkgs, ...}: {
+                nixpkgs.overlays = [overlay-old];
+              })
               ./home.nix
               {
                 home = {
