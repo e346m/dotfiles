@@ -145,6 +145,11 @@ require("snippy").setup({
 	},
 })
 
+require("copilot").setup({
+	suggestion = { enabled = false },
+	panel = { enabled = false },
+})
+
 local cmp = require("cmp")
 cmp.setup({
 	formatting = {
@@ -185,6 +190,7 @@ cmp.setup({
 		{ name = "snippy" },
 		{ name = "path" },
 	}, {
+		{ name = "copilot", group_index = 2 },
 		{ name = "nvim_lsp", keyword_length = 3 },
 		{ name = "buffer", keyword_length = 4 },
 	}),

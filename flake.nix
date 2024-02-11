@@ -28,6 +28,9 @@
             modules = [
               ({ config, pkgs, ...}: {
                 nixpkgs.overlays = [overlay-old];
+                nixpkgs.config = {
+                  allowUnfree = true;
+                };
               })
               ./home.nix
               {

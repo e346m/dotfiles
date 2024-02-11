@@ -18,6 +18,9 @@
     gnupg
     git-crypt
     wakeonlan
+    ethtool
+    wol
+    jq
     (google-cloud-sdk.withExtraComponents [google-cloud-sdk.components.gke-gcloud-auth-plugin])
     google-cloud-sql-proxy
     grpcui
@@ -273,7 +276,6 @@
       telescope-nvim
       plenary-nvim
       gruvbox-material
-      #old.fern-vim
 
       nvim-lint
       conform-nvim
@@ -297,7 +299,13 @@
       markdown-preview-nvim
       bracey-vim
 
+      #copilot
+      copilot-vim
+      copilot-lua
+      copilot-cmp
+
     ] ++ [pkgs.old.vimPlugins.fern-vim];
+
     extraLuaConfig = lib.fileContents ./init.lua;
     extraPackages = with pkgs; [
       lua-language-server
