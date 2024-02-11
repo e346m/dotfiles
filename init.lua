@@ -254,6 +254,10 @@ lspconfig.gopls.setup({
 	},
 })
 
+lspconfig.hls.setup({
+	filetypes = { "haskell", "lhaskell", "cabal" },
+})
+
 vim.api.nvim_create_autocmd("BufWritePre", {
 	pattern = "*.go",
 	callback = function()
@@ -302,6 +306,7 @@ require("conform").setup({
 })
 
 require("lspconfig").kotlin_language_server.setup({})
+require("lspconfig").pyright.setup({})
 
 -- LSPのフォーマッターも動いてるし、goに限ってはカスタムのフォーマットも作成しているし、どこかで整理する
 vim.api.nvim_create_autocmd("BufWritePre", {

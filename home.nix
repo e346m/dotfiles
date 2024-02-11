@@ -12,11 +12,14 @@
     ripgrep
     tree
     old.jetbrains.idea-community
+    vscode
     docker
     dbeaver
-    ethtool
-    wol
+    gnupg
+    git-crypt
+    wakeonlan
     (google-cloud-sdk.withExtraComponents [google-cloud-sdk.components.gke-gcloud-auth-plugin])
+    google-cloud-sql-proxy
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -283,6 +286,8 @@
       stylua
       zls
       kotlin-language-server
+      haskellPackages.haskell-language-server
+      nodePackages_latest.pyright
     ];
   };
 

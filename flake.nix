@@ -14,16 +14,14 @@
   outputs = { nixpkgs, home-manager, old-nixpkgs, ... }:
       let
         pkgs = nixpkgs.legacyPackages.x86_64-linux;
-        darwinPkgs = nixpkgs.legacyPackages.aarch64-darwin;
+        darwinPkgs = (import nixpkgs {
+          system = "aarch64-darwin";
+        });
         overlay-old = final: prev: {
           old = old-nixpkgs.legacyPackages.${prev.system};
         };
       in
       {
-# how to set permittedInsecurePackages?
-        nixpkgs.config = {
-          permittedInsecurePackages = [ "nodejs-16.20.2" ];
-        };
         homeConfigurations = {
           "eiji" = home-manager.lib.homeManagerConfiguration {
             inherit pkgs;
@@ -46,6 +44,7 @@
             modules = [
               ({ config, pkgs, ...}: {
                 nixpkgs.overlays = [overlay-old];
+                nixpkgs.config.allowUnfree = true;
               })
               ./home.nix
               {
