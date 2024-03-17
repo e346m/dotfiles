@@ -157,6 +157,7 @@ cmp.setup({
 			vim_item.menu = "menu"
 
 			vim_item.menu = ({
+				copilot = "[Copilot]",
 				nvim_lsp = "[LSP]",
 				look = "[Dict]",
 				buffer = "[Buffer]",

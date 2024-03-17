@@ -33,11 +33,13 @@
     grpcurl
     mycli
     mysql80
+    trash-cli
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
   home.file = { };
+
 
 
   #Loading snippets files and set as text expression
@@ -300,7 +302,7 @@
       bracey-vim
 
       #copilot
-      copilot-vim
+      # copilot-vim
       copilot-lua
       copilot-cmp
 
