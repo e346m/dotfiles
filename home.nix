@@ -15,9 +15,15 @@
     jetbrains.idea-community
     vscode
     docker
+    jdk8
+    jetbrains.idea-community
+    vscode
+    docker
+    dbeaver-bin
     gnupg
     git-crypt
     wakeonlan
+    protobuf
     ethtool
     wol
     jq
@@ -272,6 +278,7 @@
         p.json
         p.toml
         p.vue
+        p.glimmer
       ]))
 
       nvim-lspconfig
@@ -313,6 +320,7 @@
       lua-language-server
       nodePackages.typescript-language-server
       nodePackages.vls
+      nodePackages.graphql-language-service-cli
       gopls
       ccls
       stylua
@@ -322,6 +330,8 @@
       nodePackages_latest.pyright
       biome
       terraform-ls
+      pyright
+      htmx-lsp
     ];
   };
 

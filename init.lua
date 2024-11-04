@@ -248,6 +248,7 @@ lspconfig.tsserver.setup({})
 lspconfig.jsonls.setup({})
 lspconfig.dartls.setup({})
 lspconfig.vls.setup({})
+lspconfig.graphql.setup({})
 
 -- https://github.com/stevearc/conform.nvim/tree/master
 -- null-lsの代替みたいなを使って、formatしたほうがよいか？　go以外の言語をサポートする必要もあるし...
@@ -274,6 +275,7 @@ vim.api.nvim_create_autocmd({ "BufWritePre" }, {
 		vim.lsp.buf.format()
 	end,
 })
+lspconfig.htmx.setup({})
 
 vim.api.nvim_create_autocmd("BufWritePre", {
 	pattern = "*.go",
@@ -347,3 +349,5 @@ require("nvim-treesitter.configs").setup({
 		additional_vim_regex_highlighting = false,
 	},
 })
+-- vim.treesitter.language.register("glimmer", "hbs")
+vim.cmd("autocmd BufRead,BufNewFile *.hbs set filetype=html")
