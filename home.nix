@@ -15,9 +15,18 @@
     jetbrains.idea-community
     vscode
     docker
+    jdk8
+    jetbrains.idea-community
+    vscode
+    docker
+    dbeaver-bin
     gnupg
     git-crypt
     wakeonlan
+    protobuf
+    ethtool
+    wol
+    jq
     (google-cloud-sdk.withExtraComponents [google-cloud-sdk.components.gke-gcloud-auth-plugin])
     google-cloud-sql-proxy
     grpcui
@@ -30,11 +39,13 @@
     grpcurl
     mycli
     mysql80
+    trash-cli
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
   home.file = { };
+
 
 
   #Loading snippets files and set as text expression
@@ -267,13 +278,13 @@
         p.json
         p.toml
         p.vue
+        p.glimmer
       ]))
 
       nvim-lspconfig
       telescope-nvim
       plenary-nvim
       gruvbox-material
-      #old.fern-vim
 
       nvim-lint
       conform-nvim
@@ -297,12 +308,19 @@
       markdown-preview-nvim
       bracey-vim
 
+      #copilot
+      # copilot-vim
+      copilot-lua
+      copilot-cmp
+
     ] ++ [pkgs.old.vimPlugins.fern-vim];
+
     extraLuaConfig = lib.fileContents ./init.lua;
     extraPackages = with pkgs; [
       lua-language-server
       nodePackages.typescript-language-server
       nodePackages.vls
+      nodePackages.graphql-language-service-cli
       gopls
       ccls
       stylua
@@ -312,6 +330,8 @@
       nodePackages_latest.pyright
       biome
       terraform-ls
+      pyright
+      htmx-lsp
     ];
   };
 

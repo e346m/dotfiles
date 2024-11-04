@@ -20,6 +20,18 @@
         overlay-old = final: prev: {
           old = old-nixpkgs.legacyPackages.${prev.system};
         };
+        overlay = final: prev: {
+          vimPlugins =
+            prev.vimPlugins
+            // {
+              copilot-lua = prev.vimPlugins.copilot-lua.overrideAttrs (old: {
+                postInstall = ''
+                  sed -i "s! copilot_node_command = \"node\"! copilot_node_command = \"${prev.nodejs}/bin/node\"!g" $out/lua/copilot/config.lua
+                '';
+              });
+            };
+
+        };
       in
       {
         homeConfigurations = {
@@ -27,7 +39,10 @@
             inherit pkgs;
             modules = [
               ({ config, pkgs, ...}: {
-                nixpkgs.overlays = [overlay-old];
+                nixpkgs.overlays = [overlay-old overlay];
+                nixpkgs.config = {
+                  allowUnfree = true;
+                };
               })
               ./home.nix
               {
@@ -43,7 +58,7 @@
             pkgs = darwinPkgs;
             modules = [
               ({ config, pkgs, ...}: {
-                nixpkgs.overlays = [overlay-old];
+                nixpkgs.overlays = [overlay-old overlay];
                 nixpkgs.config.allowUnfree = true;
                 nixpkgs.config.allowUnsupportedSystem = true;
                 nixpkgs.config.allowBroken = true;

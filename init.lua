@@ -145,6 +145,11 @@ require("snippy").setup({
 	},
 })
 
+require("copilot").setup({
+	suggestion = { enabled = false },
+	panel = { enabled = false },
+})
+
 local cmp = require("cmp")
 cmp.setup({
 	formatting = {
@@ -152,6 +157,7 @@ cmp.setup({
 			vim_item.menu = "menu"
 
 			vim_item.menu = ({
+				copilot = "[Copilot]",
 				nvim_lsp = "[LSP]",
 				look = "[Dict]",
 				buffer = "[Buffer]",
@@ -185,6 +191,7 @@ cmp.setup({
 		{ name = "snippy" },
 		{ name = "path" },
 	}, {
+		{ name = "copilot", group_index = 2 },
 		{ name = "nvim_lsp", keyword_length = 3 },
 		{ name = "buffer", keyword_length = 4 },
 	}),
@@ -241,6 +248,7 @@ lspconfig.tsserver.setup({})
 lspconfig.jsonls.setup({})
 lspconfig.dartls.setup({})
 lspconfig.vls.setup({})
+lspconfig.graphql.setup({})
 
 -- https://github.com/stevearc/conform.nvim/tree/master
 -- null-lsの代替みたいなを使って、formatしたほうがよいか？　go以外の言語をサポートする必要もあるし...
@@ -267,6 +275,7 @@ vim.api.nvim_create_autocmd({ "BufWritePre" }, {
 		vim.lsp.buf.format()
 	end,
 })
+lspconfig.htmx.setup({})
 
 vim.api.nvim_create_autocmd("BufWritePre", {
 	pattern = "*.go",
@@ -340,3 +349,5 @@ require("nvim-treesitter.configs").setup({
 		additional_vim_regex_highlighting = false,
 	},
 })
+-- vim.treesitter.language.register("glimmer", "hbs")
+vim.cmd("autocmd BufRead,BufNewFile *.hbs set filetype=html")
