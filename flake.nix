@@ -66,11 +66,11 @@
         };
       };
 
-      templates = utils.lib.eachDefaultSystem (system: {
-        go = {
-          path = ./templates/go;
-          description = "Go development environment";
+        templates = {
+          go = {
+            path = ./templates/go;
+            description = "Go development environment";
+          };
         };
-      });
     };
 }
