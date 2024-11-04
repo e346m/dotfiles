@@ -38,7 +38,6 @@
             }
           ];
         };
-<<<<<<< Updated upstream
         overlay = final: prev: {
           vimPlugins =
             prev.vimPlugins
@@ -91,26 +90,6 @@
               }
             ];
           };
-=======
-
-        "eijimishiro" = home-manager.lib.homeManagerConfiguration {
-          pkgs = darwinPkgs;
-          modules = [
-            ({ config, pkgs, ... }: {
-              nixpkgs.overlays = [ overlay-old ];
-              nixpkgs.config.allowUnfree = true;
-              nixpkgs.config.allowUnsupportedSystem = true;
-              nixpkgs.config.allowBroken = true;
-            })
-            ./home.nix
-            {
-              home = {
-                username = "eijimishiro";
-                homeDirectory = "/Users/eijimishiro";
-              };
-            }
-          ];
->>>>>>> Stashed changes
         };
       };
 
