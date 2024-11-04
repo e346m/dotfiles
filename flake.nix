@@ -71,6 +71,11 @@
             path = ./templates/go;
             description = "Go development environment";
           };
+
+          python = {
+            path = ./templates/python;
+            description = "Python development environment";
+          };
         };
     };
 }
