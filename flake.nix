@@ -45,6 +45,8 @@
               ({ config, pkgs, ...}: {
                 nixpkgs.overlays = [overlay-old];
                 nixpkgs.config.allowUnfree = true;
+                nixpkgs.config.allowUnsupportedSystem = true;
+                nixpkgs.config.allowBroken = true;
               })
               ./home.nix
               {

@@ -8,18 +8,28 @@
   home.packages = with pkgs; [
     wl-clipboard # For tmux clipboard on the wayland system
     gh
-    rnix-lsp
+    jq
     ripgrep
+    fd
     tree
-    old.jetbrains.idea-community
+    jetbrains.idea-community
     vscode
     docker
-    dbeaver
     gnupg
     git-crypt
     wakeonlan
     (google-cloud-sdk.withExtraComponents [google-cloud-sdk.components.gke-gcloud-auth-plugin])
     google-cloud-sql-proxy
+    grpcui
+    sequelpro
+    k9s
+    zed
+    #zed-editor
+    terraform
+    kubectx
+    grpcurl
+    mycli
+    mysql80
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -58,7 +68,7 @@
   programs.alacritty = {
     enable = true;
     settings = {
-    	font.size = 14;
+    	font.size = 16;
     };
   };
 
@@ -84,8 +94,18 @@
       la = "ls -A";
       ll = "ls -lh";
       vim = "nvim";
+      demo-sql-proxy="cloud-sql-proxy \"upsidr-prod-chronos:asia-northeast1:demo-client-api?port=43306\"";
+      staging-sql-proxy="cloud-sql-proxy \"upsidr-staging-chronos:asia-northeast1:client-api?port=13306\"";
+      production-read-sql-proxy="cloud-sql-proxy \"upsidr-prod-chronos:asia-northeast1:client-api-read-replica-bi?port=23306\"";
+      production-write-sql-proxy="cloud-sql-proxy \"upsidr-prod-chronos:asia-northeast1:client-api?port=53306\"";
+      reward-staging-sql-proxy="cloud-sql-proxy \"upsidr-staging-chronos:asia-northeast1:reward-point?port=3315\"";
     };
     initExtra = ''
+
+      if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
+        . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
+      fi
+
       eval "$(direnv hook zsh)"
 
       function cdg()
@@ -246,13 +266,14 @@
         p.yaml
         p.json
         p.toml
+        p.vue
       ]))
 
       nvim-lspconfig
       telescope-nvim
       plenary-nvim
       gruvbox-material
-      fern-vim
+      #old.fern-vim
 
       nvim-lint
       conform-nvim
@@ -272,15 +293,16 @@
       # lsp
       nvim-lspconfig
 
-      #markdown
+      #live preview
       markdown-preview-nvim
+      bracey-vim
 
-    ];
+    ] ++ [pkgs.old.vimPlugins.fern-vim];
     extraLuaConfig = lib.fileContents ./init.lua;
     extraPackages = with pkgs; [
       lua-language-server
       nodePackages.typescript-language-server
-      rnix-lsp
+      nodePackages.vls
       gopls
       ccls
       stylua
@@ -288,6 +310,8 @@
       kotlin-language-server
       haskellPackages.haskell-language-server
       nodePackages_latest.pyright
+      biome
+      terraform-ls
     ];
   };
 

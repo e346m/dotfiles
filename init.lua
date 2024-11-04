@@ -237,8 +237,10 @@ lspconfig.lua_ls.setup({
 	},
 })
 
-lspconfig.rnix.setup({})
 lspconfig.tsserver.setup({})
+lspconfig.jsonls.setup({})
+lspconfig.dartls.setup({})
+lspconfig.vls.setup({})
 
 -- https://github.com/stevearc/conform.nvim/tree/master
 -- null-lsの代替みたいなを使って、formatしたほうがよいか？　go以外の言語をサポートする必要もあるし...
@@ -256,6 +258,14 @@ lspconfig.gopls.setup({
 
 lspconfig.hls.setup({
 	filetypes = { "haskell", "lhaskell", "cabal" },
+})
+
+lspconfig.terraformls.setup({})
+vim.api.nvim_create_autocmd({ "BufWritePre" }, {
+	pattern = { "*.tf", "*.tfvars" },
+	callback = function()
+		vim.lsp.buf.format()
+	end,
 })
 
 vim.api.nvim_create_autocmd("BufWritePre", {
@@ -314,4 +324,19 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 	callback = function(args)
 		require("conform").format({ bufnr = args.buf })
 	end,
+})
+
+vim.api.nvim_command("au BufRead,BufNewFile *.tf set filetype=terraform")
+vim.api.nvim_command("au FileType terraform setlocal filetype=hcl")
+require("nvim-treesitter.configs").setup({
+	highlight = {
+		enable = true,
+		disable = function(lang, buf)
+			if lang == "terraform" then
+				vim.api.nvim_buf_set_option(buf, "filetype", "hcl")
+			end
+			return false
+		end,
+		additional_vim_regex_highlighting = false,
+	},
 })
