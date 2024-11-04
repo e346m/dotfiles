@@ -19,16 +19,28 @@
       overlay-old = final: prev: {
         old = old-nixpkgs.legacyPackages.${prev.system};
       };
+
+      overlay = final: prev: {
+        vimPlugins = prev.vimPlugins // {
+          copilot-lua = prev.vimPlugins.copilot-lua.overrideAttrs (old: {
+            postInstall = ''
+              sed -i "s! copilot_node_command = \"node\"! copilot_node_command = \"${prev.nodejs}/bin/node\"!g" $out/lua/copilot/config.lua
+            '';
+          });
+        };
+      };
+
+      allowUnfree = ({ config, pkgs, ... }: {
+        nixpkgs.overlays = [ overlay-old overlay ];
+        nixpkgs.config.allowUnfree = true;
+        nixpkgs.config.allowUnsupportedSystem = true;
+      });
     in {
       homeConfigurations = {
         "eiji" = home-manager.lib.homeManagerConfiguration {
           inherit pkgs;
           modules = [
-            ({ config, pkgs, ... }: {
-              nixpkgs.overlays = [ overlay-old ];
-              nixpkgs.config.allowUnfree = true;
-              nixpkgs.config.allowUnsupportedSystem = true;
-            })
+            allowUnfree
             ./home.nix
             {
               home = {
@@ -38,58 +50,19 @@
             }
           ];
         };
-        overlay = final: prev: {
-          vimPlugins =
-            prev.vimPlugins
-            // {
-              copilot-lua = prev.vimPlugins.copilot-lua.overrideAttrs (old: {
-                postInstall = ''
-                  sed -i "s! copilot_node_command = \"node\"! copilot_node_command = \"${prev.nodejs}/bin/node\"!g" $out/lua/copilot/config.lua
-                '';
-              });
-            };
 
-        };
-      in
-      {
-        homeConfigurations = {
-          "eiji" = home-manager.lib.homeManagerConfiguration {
-            inherit pkgs;
-            modules = [
-              ({ config, pkgs, ...}: {
-                nixpkgs.overlays = [overlay-old overlay];
-                nixpkgs.config = {
-                  allowUnfree = true;
-                };
-              })
-              ./home.nix
-              {
-                home = {
-                  username = "eiji";
-                  homeDirectory = "/home/eiji";
-                };
-              }
-            ];
-          };
-
-          "eijimishiro" = home-manager.lib.homeManagerConfiguration {
-            pkgs = darwinPkgs;
-            modules = [
-              ({ config, pkgs, ...}: {
-                nixpkgs.overlays = [overlay-old overlay];
-                nixpkgs.config.allowUnfree = true;
-                nixpkgs.config.allowUnsupportedSystem = true;
-                nixpkgs.config.allowBroken = true;
-              })
-              ./home.nix
-              {
-                home = {
-                  username = "eijimishiro";
-                  homeDirectory = "/Users/eijimishiro";
-                };
-              }
-            ];
-          };
+        "eijimishiro" = home-manager.lib.homeManagerConfiguration {
+          pkgs = darwinPkgs;
+          modules = [
+            allowUnfree
+            ./home.nix
+            {
+              home = {
+                username = "eijimishiro";
+                homeDirectory = "/Users/eijimishiro";
+              };
+            }
+          ];
         };
       };
 
