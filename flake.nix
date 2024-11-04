@@ -9,17 +9,36 @@
       url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { nixpkgs, home-manager, old-nixpkgs, ... }:
-      let
-        pkgs = nixpkgs.legacyPackages.x86_64-linux;
-        darwinPkgs = (import nixpkgs {
-          system = "aarch64-darwin";
-        });
-        overlay-old = final: prev: {
-          old = old-nixpkgs.legacyPackages.${prev.system};
+  outputs = { nixpkgs, utils, home-manager, old-nixpkgs, ... }:
+    let
+      pkgs = nixpkgs.legacyPackages.x86_64-linux;
+      darwinPkgs = (import nixpkgs { system = "aarch64-darwin"; });
+      overlay-old = final: prev: {
+        old = old-nixpkgs.legacyPackages.${prev.system};
+      };
+    in {
+      homeConfigurations = {
+        "eiji" = home-manager.lib.homeManagerConfiguration {
+          inherit pkgs;
+          modules = [
+            ({ config, pkgs, ... }: {
+              nixpkgs.overlays = [ overlay-old ];
+              nixpkgs.config.allowUnfree = true;
+              nixpkgs.config.allowUnsupportedSystem = true;
+            })
+            ./home.nix
+            {
+              home = {
+                username = "eiji";
+                homeDirectory = "/home/eiji";
+              };
+            }
+          ];
         };
+<<<<<<< Updated upstream
         overlay = final: prev: {
           vimPlugins =
             prev.vimPlugins
@@ -72,6 +91,34 @@
               }
             ];
           };
+=======
+
+        "eijimishiro" = home-manager.lib.homeManagerConfiguration {
+          pkgs = darwinPkgs;
+          modules = [
+            ({ config, pkgs, ... }: {
+              nixpkgs.overlays = [ overlay-old ];
+              nixpkgs.config.allowUnfree = true;
+              nixpkgs.config.allowUnsupportedSystem = true;
+              nixpkgs.config.allowBroken = true;
+            })
+            ./home.nix
+            {
+              home = {
+                username = "eijimishiro";
+                homeDirectory = "/Users/eijimishiro";
+              };
+            }
+          ];
+>>>>>>> Stashed changes
         };
       };
+
+      templates = utils.lib.eachDefaultSystem (system: {
+        go = {
+          path = ./templates/go;
+          description = "Go development environment";
+        };
+      });
+    };
 }
