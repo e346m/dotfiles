@@ -310,7 +310,13 @@
 
 
       # AI IDE
-      avante-nvim
+      {
+        plugin = avante-nvim;
+        type = "lua";
+        config = ''
+          vim.fn.system("cd ${pkgs.vimPlugins.avante-nvim} && make BUILD_FROM_SOURCE=true")
+        '';
+      }
       # 必要な依存関係
       dressing-nvim
       plenary-nvim
@@ -325,6 +331,7 @@
     ] ++ [pkgs.old.vimPlugins.vim-fern];
 
     extraLuaConfig = lib.fileContents ./init.lua;
+
     extraPackages = with pkgs; [
       lua-language-server
       nodejs
@@ -342,6 +349,10 @@
       terraform-ls
       pyright
       htmx-lsp
+
+      # FOR avante buildInput
+      cargo
+      gcc
     ];
   };
 

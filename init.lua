@@ -351,6 +351,7 @@ require("nvim-treesitter.configs").setup({
 -- vim.treesitter.language.register("glimmer", "hbs")
 vim.cmd("autocmd BufRead,BufNewFile *.hbs set filetype=html")
 
+require("avante_lib").load()
 require("avante").setup({
 	provider = "copilot", -- メインのプロバイダーとして設定
 	auto_suggestions_provider = "copilot", -- 自動提案用のプロバイダーとしても設定
