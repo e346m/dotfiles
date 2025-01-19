@@ -7,7 +7,7 @@ vim.o.ruler = true --ルーラーの表示
 vim.o.smartindent = true --オートインデント
 vim.o.showcmd = true --入力中のコマンドをステータスに表示する
 vim.o.showmatch = true --括弧入力時の対応する括弧を表示
-vim.o.laststatus = 2 --ステータスラインを常に表示
+vim.o.laststatus = 3 --ステータスラインを常に表示
 vim.o.cursorline = true
 vim.o.colorcolumn = "100"
 vim.o.wrap = true
@@ -21,7 +21,6 @@ vim.o.ignorecase = true --検索文字列が小文字の場合は大文字小文
 vim.o.smartcase = true --検索文字列に大文字が含まれている場合は区別して検索する
 vim.o.wrapscan = true --検索時に最後まで行ったら最初に戻る
 vim.o.incsearch = true --検索文字列入力時に順次対象文字列にヒットさる
-vim.o.hlsearch = true --Highlight search = true result
 vim.o.spell = true
 vim.o.spelllang = "en_us,cjk"
 
@@ -244,7 +243,7 @@ lspconfig.lua_ls.setup({
 	},
 })
 
-lspconfig.tsserver.setup({})
+lspconfig.ts_ls.setup({})
 lspconfig.jsonls.setup({})
 lspconfig.dartls.setup({})
 lspconfig.vls.setup({})
@@ -351,3 +350,23 @@ require("nvim-treesitter.configs").setup({
 })
 -- vim.treesitter.language.register("glimmer", "hbs")
 vim.cmd("autocmd BufRead,BufNewFile *.hbs set filetype=html")
+
+require("avante").setup({
+	provider = "copilot", -- メインのプロバイダーとして設定
+	auto_suggestions_provider = "copilot", -- 自動提案用のプロバイダーとしても設定
+	behaviour = {
+		auto_suggestions = true, -- copilotを使う場合はtrueにすることをお勧めします
+		auto_set_keymaps = true,
+		auto_set_highlight_group = true,
+		minimize_diff = true,
+	},
+	windows = {
+		position = "right",
+		width = 30,
+		sidebar_header = {
+			enabled = true,
+			align = "center",
+			rounded = true,
+		},
+	},
+})

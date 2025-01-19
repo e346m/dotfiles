@@ -1,7 +1,6 @@
 { config, pkgs, lib, ... }:
 {
-
-  home.stateVersion = "23.05"; # Please read the comment before changing.
+  home.stateVersion = "24.05"; # Please read the comment before changing.
 
   # The home.packages option allows you to install Nix packages into your
   # environment.
@@ -14,6 +13,7 @@
     tree
     jetbrains.idea-community
     vscode
+    opera
     docker
     jdk8
     jetbrains.idea-community
@@ -33,7 +33,8 @@
     sequelpro
     k9s
     zed
-    #zed-editor
+    # zed-editor
+    vulkan-tools
     terraform
     kubectx
     grpcurl
@@ -45,7 +46,6 @@
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
   home.file = { };
-
 
 
   #Loading snippets files and set as text expression
@@ -66,7 +66,7 @@
   #
   # if you don't want to manage your shell through Home Manager.
   nix = {
-    package = pkgs.nixFlakes;
+    package = pkgs.nixVersions.latest;
     settings = {
       experimental-features = "nix-command flakes";
     };
@@ -75,18 +75,18 @@
     EDITOR = "nvim";
   };
 
-
-  programs.alacritty = {
-    enable = true;
-    settings = {
-    	font.size = 16;
-    };
-  };
-
   programs.fzf = {
     enable = true;
   };
 
+  programs.ghostty = {
+    enable = true;
+    enableZshIntegration = true;
+    settings = {
+      theme = "catppuccin-mocha";
+      font-size = 14;
+    };
+  };
 
   programs.zsh = {
     enable = true;
@@ -225,17 +225,17 @@
       set-option -ga terminal-overrides ",$TERM:Tc"
 
       # avoid copy-pipe conflict
-      set -s set-clipboard off
+      set -s set-clipboard on
 
       # For Linux
-      if-shell -b "uname | grep -q Linux" {
-        set -s copy-command "wl-copy"
-      }
+      # if-shell -b "uname | grep -q Linux" {
+      #   set -s copy-command "wl-copy"
+      # }
 
-      # For mac
-      if-shell -b "uname | grep -q Darwin" {
-        set -s copy-command "pbcopy"
-      }
+      # # For mac
+      # if-shell -b "uname | grep -q Darwin" {
+      #   set -s copy-command "pbcopy"
+      # }
 
       bind -T copy-mode-vi v send-keys -X begin-selection
 
@@ -308,18 +308,28 @@
       markdown-preview-nvim
       bracey-vim
 
-      #copilot
-      # copilot-vim
-      copilot-lua
+
+      # AI IDE
+      avante-nvim
+      # 必要な依存関係
+      dressing-nvim
+      plenary-nvim
+      nui-nvim
+      nvim-cmp          # オプショナル: コマンド補完用
+      nvim-web-devicons # オプショナル: アイコン表示用
+      copilot-lua       # オプショナル: copilotプロバイダーを使用する場合
+      img-clip-nvim     # オプショナル: 画像貼り付け機能用
+      render-markdown-nvim # オプショナル: マークダウンレンダリング用
       copilot-cmp
 
-    ] ++ [pkgs.old.vimPlugins.fern-vim];
+    ] ++ [pkgs.old.vimPlugins.vim-fern];
 
     extraLuaConfig = lib.fileContents ./init.lua;
     extraPackages = with pkgs; [
       lua-language-server
+      nodejs
       nodePackages.typescript-language-server
-      nodePackages.vls
+      old.nodePackages.vls
       nodePackages.graphql-language-service-cli
       gopls
       ccls
@@ -327,7 +337,7 @@
       zls
       kotlin-language-server
       haskellPackages.haskell-language-server
-      nodePackages_latest.pyright
+      pyright
       biome
       terraform-ls
       pyright
