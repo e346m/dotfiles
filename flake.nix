@@ -34,6 +34,7 @@
         nixpkgs.overlays = [ overlay-old overlay ];
         nixpkgs.config.allowUnfree = true;
         nixpkgs.config.allowUnsupportedSystem = true;
+        nixpkgs.config.allowBroken = true;
       });
     in {
       homeConfigurations = {
@@ -46,6 +47,16 @@
               home = {
                 username = "eiji";
                 homeDirectory = "/home/eiji";
+                packages = with pkgs; [
+                  opera
+                  dbeaver-bin
+                  wakeonlan
+                  ethtool
+                  wol
+                  mysql80
+                  wl-clipboard
+                  vulkan-tools
+                ];
               };
             }
           ];
@@ -60,6 +71,9 @@
               home = {
                 username = "eijimishiro";
                 homeDirectory = "/Users/eijimishiro";
+                packages = with darwinPkgs; [
+                  zed-editor
+                ];
               };
             }
           ];

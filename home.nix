@@ -5,7 +5,6 @@
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
-    wl-clipboard # For tmux clipboard on the wayland system
     gh
     jq
     ripgrep
@@ -13,19 +12,13 @@
     tree
     jetbrains.idea-community
     vscode
-    opera
     docker
     jdk8
-    jetbrains.idea-community
     vscode
     docker
-    dbeaver-bin
     gnupg
     git-crypt
-    wakeonlan
     protobuf
-    ethtool
-    wol
     jq
     (google-cloud-sdk.withExtraComponents [google-cloud-sdk.components.gke-gcloud-auth-plugin])
     google-cloud-sql-proxy
@@ -33,13 +26,10 @@
     sequelpro
     k9s
     zed
-    # zed-editor
-    vulkan-tools
     terraform
     kubectx
     grpcurl
     mycli
-    mysql80
     trash-cli
     kubeseal
     kustomize
@@ -82,7 +72,7 @@
   };
 
   programs.ghostty = {
-    enable = true;
+    enable = lib.mkIf (lib.systems.isLinux) true;
     enableZshIntegration = true;
     settings = {
       theme = "catppuccin-mocha";
@@ -344,7 +334,7 @@
       ccls
       stylua
       zls
-      kotlin-language-server
+      # kotlin-language-server
       haskellPackages.haskell-language-server
       pyright
       biome
