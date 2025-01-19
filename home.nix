@@ -41,6 +41,8 @@
     mycli
     mysql80
     trash-cli
+    kubeseal
+    kustomize
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
