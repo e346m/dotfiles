@@ -4,48 +4,41 @@
 
   # The home.packages option allows you to install Nix packages into your
   # environment.
+  # it's useful to manage all package in home-manager but hard to update channel
   home.packages = with pkgs; [
     gh
     jq
     ripgrep
     fd
     tree
-    jetbrains.idea-community
     vscode
     docker
     jdk8
-    vscode
-    docker
     gnupg
     git-crypt
     protobuf
-    jq
     (google-cloud-sdk.withExtraComponents [google-cloud-sdk.components.gke-gcloud-auth-plugin])
     google-cloud-sql-proxy
     grpcui
-    sequelpro
     k9s
-    zed
     terraform
     kubectx
     grpcurl
-    mycli
-    trash-cli
     kubeseal
     kustomize
+    ollama
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
   home.file = { };
 
-
   #Loading snippets files and set as text expression
   # readDir -> return set,  create new set with map iteration.
   xdg.configFile =
     (lib.mapAttrs'
-      (name: type: lib.nameValuePair "nvim/snippets/${name}" { text = (builtins.readFile ./snippets/${name}); })
-      (builtins.readDir ./snippets));
+      (name: type: lib.nameValuePair "nvim/snippets/${name}" { text = (builtins.readFile ../snippets/${name}); })
+      (builtins.readDir ../snippets));
 
   # You can also manage environment variables but you will have to manually
   # source
@@ -63,21 +56,13 @@
       experimental-features = "nix-command flakes";
     };
   };
+
   home.sessionVariables = {
     EDITOR = "nvim";
   };
 
   programs.fzf = {
     enable = true;
-  };
-
-  programs.ghostty = {
-    enable = lib.mkIf (lib.systems.isLinux) true;
-    enableZshIntegration = true;
-    settings = {
-      theme = "catppuccin-mocha";
-      font-size = 14;
-    };
   };
 
   programs.zsh = {
@@ -322,7 +307,7 @@
 
     ] ++ [pkgs.old.vimPlugins.vim-fern];
 
-    extraLuaConfig = lib.fileContents ./init.lua;
+    extraLuaConfig = lib.fileContents ../init.lua;
 
     extraPackages = with pkgs; [
       lua-language-server

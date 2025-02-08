@@ -42,23 +42,8 @@
           inherit pkgs;
           modules = [
             allowUnfree
-            ./home.nix
-            {
-              home = {
-                username = "eiji";
-                homeDirectory = "/home/eiji";
-                packages = with pkgs; [
-                  opera
-                  dbeaver-bin
-                  wakeonlan
-                  ethtool
-                  wol
-                  mysql80
-                  wl-clipboard
-                  vulkan-tools
-                ];
-              };
-            }
+            ./modules/common.nix
+            ./modules/desktop-linux.nix
           ];
         };
 
@@ -66,16 +51,8 @@
           pkgs = darwinPkgs;
           modules = [
             allowUnfree
-            ./home.nix
-            {
-              home = {
-                username = "eijimishiro";
-                homeDirectory = "/Users/eijimishiro";
-                packages = with darwinPkgs; [
-                  zed-editor
-                ];
-              };
-            }
+            ./modules/common.nix
+            ./modules/mbp-m2.nix
           ];
         };
       };
