@@ -72,6 +72,11 @@
           path = ./templates/python;
           description = "Python development environment";
         };
+        
+        node = {
+          path = ./templates/node;
+          description = "Node development environment";
+        };
       };
     };
 }
