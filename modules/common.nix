@@ -87,6 +87,7 @@
       production-read-sql-proxy="cloud-sql-proxy \"upsidr-prod-chronos:asia-northeast1:client-api-read-replica-bi?port=23306\"";
       production-write-sql-proxy="cloud-sql-proxy \"upsidr-prod-chronos:asia-northeast1:client-api?port=53306\"";
       reward-staging-sql-proxy="cloud-sql-proxy \"upsidr-staging-chronos:asia-northeast1:reward-point?port=3315\"";
+      theseus-staging-sql-proxy="cloud-sql-proxy \"upsidr-staging-theseus:asia-northeast1:theseus?port=4315\" --auto-iam-authn";
     };
     initExtra = ''
 

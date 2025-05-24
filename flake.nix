@@ -28,6 +28,11 @@
             '';
           });
         };
+
+        nodePackages = prev.nodePackages // {
+          graphql-language-service-cli = old-nixpkgs.legacyPackages.${prev.system}.nodePackages.graphql-language-service-cli;
+        };
+
       };
 
       allowUnfree = ({ config, pkgs, ... }: {

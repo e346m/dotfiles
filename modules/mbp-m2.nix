@@ -4,7 +4,8 @@
     username = "eijimishiro";
     homeDirectory = "/Users/eijimishiro";
     packages = with pkgs; [
-      zed-editor
+      ffmpeg-full
+      jetbrains.idea-community
     ];
   };
 }
