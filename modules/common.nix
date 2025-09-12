@@ -27,6 +27,8 @@
     kubeseal
     kustomize
     ollama
+    claude-code
+    gemini-cli
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -88,6 +90,8 @@
       production-write-sql-proxy="cloud-sql-proxy \"upsidr-prod-chronos:asia-northeast1:client-api?port=53306\"";
       reward-staging-sql-proxy="cloud-sql-proxy \"upsidr-staging-chronos:asia-northeast1:reward-point?port=3315\"";
       theseus-staging-sql-proxy="cloud-sql-proxy \"upsidr-staging-theseus:asia-northeast1:theseus?port=4315\" --auto-iam-authn";
+      hermes-staging-sql-proxy="cloud-sql-proxy \"upsidr-staging-chronos:asia-northeast1:hermes?port=3310\"";
+      hermes-prod-sql-proxy="cloud-sql-proxy \"upsidr-prod-chronos:asia-northeast1:hermes?port=13310\"";
     };
     initExtra = ''
 
@@ -287,21 +291,12 @@
       bracey-vim
 
 
-      # AI IDE
-      {
-        plugin = avante-nvim;
-        type = "lua";
-        config = ''
-          vim.fn.system("cd ${pkgs.vimPlugins.avante-nvim} && make BUILD_FROM_SOURCE=true")
-        '';
-      }
       # 必要な依存関係
       dressing-nvim
       plenary-nvim
       nui-nvim
       nvim-cmp          # オプショナル: コマンド補完用
       nvim-web-devicons # オプショナル: アイコン表示用
-      copilot-lua       # オプショナル: copilotプロバイダーを使用する場合
       img-clip-nvim     # オプショナル: 画像貼り付け機能用
       render-markdown-nvim # オプショナル: マークダウンレンダリング用
       copilot-cmp
@@ -314,23 +309,16 @@
       lua-language-server
       nodejs
       nodePackages.typescript-language-server
-      old.nodePackages.vls
-      nodePackages.graphql-language-service-cli
       gopls
       ccls
       stylua
       zls
-      # kotlin-language-server
       haskellPackages.haskell-language-server
       pyright
       biome
       terraform-ls
       pyright
       htmx-lsp
-
-      # FOR avante buildInput
-      cargo
-      gcc
     ];
   };
 

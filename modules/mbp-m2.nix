@@ -5,7 +5,8 @@
     homeDirectory = "/Users/eijimishiro";
     packages = with pkgs; [
       ffmpeg-full
-      jetbrains.idea-community
+      git-filter-repo
+      devbox
     ];
   };
 }

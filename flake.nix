@@ -3,7 +3,7 @@
 
   inputs = {
     # Specify the source of Home Manager and Nixpkgs.
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/3016b4b15d13f3089db8a41ef937b13a9e33a8df";
     old-nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";
     home-manager = {
       url = "github:nix-community/home-manager/master";
@@ -27,10 +27,6 @@
               sed -i "s! copilot_node_command = \"node\"! copilot_node_command = \"${prev.nodejs}/bin/node\"!g" $out/lua/copilot/config.lua
             '';
           });
-        };
-
-        nodePackages = prev.nodePackages // {
-          graphql-language-service-cli = old-nixpkgs.legacyPackages.${prev.system}.nodePackages.graphql-language-service-cli;
         };
 
       };
@@ -72,7 +68,7 @@
           path = ./templates/python;
           description = "Python development environment";
         };
-        
+
         node = {
           path = ./templates/node;
           description = "Node development environment";
