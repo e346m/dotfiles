@@ -70,7 +70,7 @@
   programs.zsh = {
     enable = true;
     defaultKeymap = "emacs";
-    dotDir = ".config/zsh";
+    dotDir = "${config.xdg.configHome}/zsh";
     syntaxHighlighting.enable = true;
     history = {
       extended = true;
@@ -290,7 +290,6 @@
       markdown-preview-nvim
       bracey-vim
 
-
       # 必要な依存関係
       dressing-nvim
       plenary-nvim
@@ -299,9 +298,10 @@
       nvim-web-devicons # オプショナル: アイコン表示用
       img-clip-nvim     # オプショナル: 画像貼り付け機能用
       render-markdown-nvim # オプショナル: マークダウンレンダリング用
-      copilot-cmp
 
-    ] ++ [pkgs.old.vimPlugins.vim-fern];
+      # Better terminal experience for Claude Code
+      snacks-nvim
+    ] ++ [pkgs.old.vimPlugins.vim-fern pkgs.unstable.vimPlugins.claudecode-nvim];
 
     extraLuaConfig = lib.fileContents ../init.lua;
 

@@ -5,6 +5,7 @@
     # Specify the source of Home Manager and Nixpkgs.
     nixpkgs.url = "github:nixos/nixpkgs/3016b4b15d13f3089db8a41ef937b13a9e33a8df";
     old-nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";
+    unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     home-manager = {
       url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -12,27 +13,19 @@
     utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { nixpkgs, utils, home-manager, old-nixpkgs, ... }:
+  outputs = { nixpkgs, utils, home-manager, old-nixpkgs, unstable, ... }:
     let
       pkgs = nixpkgs.legacyPackages.x86_64-linux;
       darwinPkgs = (import nixpkgs { system = "aarch64-darwin"; });
       overlay-old = final: prev: {
         old = old-nixpkgs.legacyPackages.${prev.system};
       };
-
-      overlay = final: prev: {
-        vimPlugins = prev.vimPlugins // {
-          copilot-lua = prev.vimPlugins.copilot-lua.overrideAttrs (old: {
-            postInstall = ''
-              sed -i "s! copilot_node_command = \"node\"! copilot_node_command = \"${prev.nodejs}/bin/node\"!g" $out/lua/copilot/config.lua
-            '';
-          });
-        };
-
+      overlay-unstable = final: prev: {
+        unstable = unstable.legacyPackages.${prev.system};
       };
 
       allowUnfree = ({ config, pkgs, ... }: {
-        nixpkgs.overlays = [ overlay-old overlay ];
+        nixpkgs.overlays = [ overlay-old overlay-unstable ];
         nixpkgs.config.allowUnfree = true;
         nixpkgs.config.allowUnsupportedSystem = true;
         nixpkgs.config.allowBroken = true;

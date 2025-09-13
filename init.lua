@@ -144,11 +144,6 @@ require("snippy").setup({
 	},
 })
 
-require("copilot").setup({
-	suggestion = { enabled = false },
-	panel = { enabled = false },
-})
-
 local cmp = require("cmp")
 cmp.setup({
 	formatting = {
@@ -156,7 +151,6 @@ cmp.setup({
 			vim_item.menu = "menu"
 
 			vim_item.menu = ({
-				copilot = "[Copilot]",
 				nvim_lsp = "[LSP]",
 				look = "[Dict]",
 				buffer = "[Buffer]",
@@ -190,7 +184,6 @@ cmp.setup({
 		{ name = "snippy" },
 		{ name = "path" },
 	}, {
-		{ name = "copilot", group_index = 2 },
 		{ name = "nvim_lsp", keyword_length = 3 },
 		{ name = "buffer", keyword_length = 4 },
 	}),
@@ -250,7 +243,7 @@ lspconfig.vls.setup({})
 lspconfig.graphql.setup({})
 
 -- https://github.com/stevearc/conform.nvim/tree/master
--- null-lsの代替みたいなを使って、formatしたほうがよいか？　go以外の言語をサポートする必要もあるし...
+-- null-lsの代替みたいなを使って、formatしたほうがよいか? go以外の言語をサポートする必要もあるし...
 lspconfig.gopls.setup({
 	settings = {
 		gopls = {
@@ -351,23 +344,29 @@ require("nvim-treesitter.configs").setup({
 -- vim.treesitter.language.register("glimmer", "hbs")
 vim.cmd("autocmd BufRead,BufNewFile *.hbs set filetype=html")
 
-require("avante_lib").load()
-require("avante").setup({
-	provider = "copilot", -- メインのプロバイダーとして設定
-	auto_suggestions_provider = "copilot", -- 自動提案用のプロバイダーとしても設定
-	behaviour = {
-		auto_suggestions = true, -- copilotを使う場合はtrueにすることをお勧めします
-		auto_set_keymaps = true,
-		auto_set_highlight_group = true,
-		minimize_diff = true,
-	},
-	windows = {
-		position = "right",
-		width = 30,
-		sidebar_header = {
-			enabled = true,
-			align = "center",
-			rounded = true,
-		},
+-- Claude Code setup
+require("claudecode").setup({
+	-- Optional: Custom path to Claude Code CLI if needed
+	-- terminal_cmd = "/path/to/claude-code",
+	git_repo_cwd = true, -- Automatically resolve git root directory
+	-- Use snacks.nvim if available for better terminal experience
+	--
+	terminal = {
+		split_side = "left", -- "left" or "right"
+		split_width_percentage = 0.30,
+		provider = "snacks", -- "auto", "snacks", "native", "external", or custom provider table
+		auto_close = true,
 	},
 })
+
+-- Claude Code keymappings
+vim.keymap.set("n", "<leader>ac", "<cmd>ClaudeCode<cr>", { desc = "Toggle Claude" })
+vim.keymap.set("n", "<leader>af", "<cmd>ClaudeCodeFocus<cr>", { desc = "Focus Claude" })
+vim.keymap.set("n", "<leader>ar", "<cmd>ClaudeCode --resume<cr>", { desc = "Resume Claude" })
+vim.keymap.set("n", "<leader>aC", "<cmd>ClaudeCode --continue<cr>", { desc = "Continue Claude" })
+vim.keymap.set("n", "<leader>am", "<cmd>ClaudeCodeSelectModel<cr>", { desc = "Select Claude model" })
+vim.keymap.set("n", "<leader>ab", "<cmd>ClaudeCodeAdd %<cr>", { desc = "Add current buffer" })
+vim.keymap.set("v", "<leader>as", "<cmd>ClaudeCodeSend<cr>", { desc = "Send to Claude" })
+-- Diff management
+vim.keymap.set("n", "<leader>aa", "<cmd>ClaudeCodeDiffAccept<cr>", { desc = "Accept diff" })
+vim.keymap.set("n", "<leader>ad", "<cmd>ClaudeCodeDiffDeny<cr>", { desc = "Deny diff" })
