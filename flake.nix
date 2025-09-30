@@ -23,9 +23,12 @@
       overlay-unstable = final: prev: {
         unstable = unstable.legacyPackages.${prev.system};
       };
+      overlay-custom = final: prev: {
+        claude-code = prev.callPackage (./. + "/pkgs/claude-code.nix") { };
+      };
 
       allowUnfree = ({ config, pkgs, ... }: {
-        nixpkgs.overlays = [ overlay-old overlay-unstable ];
+        nixpkgs.overlays = [ overlay-old overlay-unstable overlay-custom ];
         nixpkgs.config.allowUnfree = true;
         nixpkgs.config.allowUnsupportedSystem = true;
         nixpkgs.config.allowBroken = true;
