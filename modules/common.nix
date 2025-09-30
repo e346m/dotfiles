@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 {
   home.stateVersion = "24.05"; # Please read the comment before changing.
 
@@ -17,7 +22,7 @@
     gnupg
     git-crypt
     protobuf
-    (google-cloud-sdk.withExtraComponents [google-cloud-sdk.components.gke-gcloud-auth-plugin])
+    (google-cloud-sdk.withExtraComponents [ google-cloud-sdk.components.gke-gcloud-auth-plugin ])
     google-cloud-sql-proxy
     grpcui
     k9s
@@ -29,6 +34,7 @@
     ollama
     claude-code
     gemini-cli
+    harlequin
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -37,10 +43,12 @@
 
   #Loading snippets files and set as text expression
   # readDir -> return set,  create new set with map iteration.
-  xdg.configFile =
-    (lib.mapAttrs'
-      (name: type: lib.nameValuePair "nvim/snippets/${name}" { text = (builtins.readFile ../snippets/${name}); })
-      (builtins.readDir ../snippets));
+  xdg.configFile = (
+    lib.mapAttrs' (
+      name: type:
+      lib.nameValuePair "nvim/snippets/${name}" { text = (builtins.readFile ../snippets/${name}); }
+    ) (builtins.readDir ../snippets)
+  );
 
   # You can also manage environment variables but you will have to manually
   # source
@@ -84,14 +92,14 @@
       la = "ls -A";
       ll = "ls -lh";
       vim = "nvim";
-      demo-sql-proxy="cloud-sql-proxy \"upsidr-prod-chronos:asia-northeast1:demo-client-api?port=43306\"";
-      staging-sql-proxy="cloud-sql-proxy \"upsidr-staging-chronos:asia-northeast1:client-api?port=13306\"";
-      production-read-sql-proxy="cloud-sql-proxy \"upsidr-prod-chronos:asia-northeast1:client-api-read-replica-bi?port=23306\"";
-      production-write-sql-proxy="cloud-sql-proxy \"upsidr-prod-chronos:asia-northeast1:client-api?port=53306\"";
-      reward-staging-sql-proxy="cloud-sql-proxy \"upsidr-staging-chronos:asia-northeast1:reward-point?port=3315\"";
-      theseus-staging-sql-proxy="cloud-sql-proxy \"upsidr-staging-theseus:asia-northeast1:theseus?port=4315\" --auto-iam-authn";
-      hermes-staging-sql-proxy="cloud-sql-proxy \"upsidr-staging-chronos:asia-northeast1:hermes?port=3310\"";
-      hermes-prod-sql-proxy="cloud-sql-proxy \"upsidr-prod-chronos:asia-northeast1:hermes?port=13310\"";
+      demo-sql-proxy = "cloud-sql-proxy \"upsidr-prod-chronos:asia-northeast1:demo-client-api?port=43306\"";
+      staging-sql-proxy = "cloud-sql-proxy \"upsidr-staging-chronos:asia-northeast1:client-api?port=13306\"";
+      production-read-sql-proxy = "cloud-sql-proxy \"upsidr-prod-chronos:asia-northeast1:client-api-read-replica-bi?port=23306\"";
+      production-write-sql-proxy = "cloud-sql-proxy \"upsidr-prod-chronos:asia-northeast1:client-api?port=53306\"";
+      reward-staging-sql-proxy = "cloud-sql-proxy \"upsidr-staging-chronos:asia-northeast1:reward-point?port=3315\"";
+      theseus-staging-sql-proxy = "cloud-sql-proxy \"upsidr-staging-theseus:asia-northeast1:theseus?port=4315\" --auto-iam-authn";
+      hermes-staging-sql-proxy = "cloud-sql-proxy \"upsidr-staging-chronos:asia-northeast1:hermes?port=3310\"";
+      hermes-prod-sql-proxy = "cloud-sql-proxy \"upsidr-prod-chronos:asia-northeast1:hermes?port=13310\"";
     };
     initExtra = ''
 
@@ -166,9 +174,7 @@
       init = {
         defaultBranch = "main";
       };
-      credential.helper = "${
-        pkgs.git.override { withLibsecret = true ;}
-      }/bin/git-credential-libsecret";
+      credential.helper = "${pkgs.git.override { withLibsecret = true; }}/bin/git-credential-libsecret";
     };
     ignores = [
       "*.swp"
@@ -240,68 +246,73 @@
     defaultEditor = true;
     viAlias = true;
     vimAlias = true;
-    plugins = with pkgs.vimPlugins; [
-      (nvim-treesitter.withPlugins (p: [
-        p.nix
-        p.go
-        p.typescript
-        p.lua
-        p.tsx
-        p.html
-        p.c
-        p.css
-        p.javascript
-        p.rust
-        p.graphql
-        p.hcl
-        p.cpp
-        # format
-        p.yaml
-        p.json
-        p.toml
-        p.vue
-        p.glimmer
-      ]))
+    plugins =
+      with pkgs.vimPlugins;
+      [
+        (nvim-treesitter.withPlugins (p: [
+          p.nix
+          p.go
+          p.typescript
+          p.lua
+          p.tsx
+          p.html
+          p.c
+          p.css
+          p.javascript
+          p.rust
+          p.graphql
+          p.hcl
+          p.cpp
+          # format
+          p.yaml
+          p.json
+          p.toml
+          p.vue
+          p.glimmer
+        ]))
 
-      nvim-lspconfig
-      telescope-nvim
-      plenary-nvim
-      gruvbox-material
+        nvim-lspconfig
+        telescope-nvim
+        plenary-nvim
+        gruvbox-material
 
-      nvim-lint
-      conform-nvim
+        nvim-lint
+        conform-nvim
 
-      #snippet
-      nvim-snippy
+        #snippet
+        nvim-snippy
 
-      #cmp
-      nvim-cmp
-      cmp-nvim-lsp
-      cmp-buffer
-      cmp-path
-      cmp-cmdline
-      cmp-snippy
+        #cmp
+        nvim-cmp
+        cmp-nvim-lsp
+        cmp-buffer
+        cmp-path
+        cmp-cmdline
+        cmp-snippy
 
+        # lsp
+        nvim-lspconfig
 
-      # lsp
-      nvim-lspconfig
+        #live preview
+        markdown-preview-nvim
+        bracey-vim
 
-      #live preview
-      markdown-preview-nvim
-      bracey-vim
+        # 必要な依存関係
+        dressing-nvim
+        plenary-nvim
+        nui-nvim
+        nvim-cmp # オプショナル: コマンド補完用
+        nvim-web-devicons # オプショナル: アイコン表示用
+        img-clip-nvim # オプショナル: 画像貼り付け機能用
+        render-markdown-nvim # オプショナル: マークダウンレンダリング用
 
-      # 必要な依存関係
-      dressing-nvim
-      plenary-nvim
-      nui-nvim
-      nvim-cmp          # オプショナル: コマンド補完用
-      nvim-web-devicons # オプショナル: アイコン表示用
-      img-clip-nvim     # オプショナル: 画像貼り付け機能用
-      render-markdown-nvim # オプショナル: マークダウンレンダリング用
-
-      # Better terminal experience for Claude Code
-      snacks-nvim
-    ] ++ [pkgs.old.vimPlugins.vim-fern pkgs.unstable.vimPlugins.claudecode-nvim];
+        # Better terminal experience for Claude Code
+        snacks-nvim
+      ]
+      ++ [
+        pkgs.old.vimPlugins.vim-fern
+        pkgs.unstable.vimPlugins.claudecode-nvim
+      ];
 
     extraLuaConfig = lib.fileContents ../init.lua;
 

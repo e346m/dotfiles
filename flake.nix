@@ -13,7 +13,15 @@
     utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { nixpkgs, utils, home-manager, old-nixpkgs, unstable, ... }:
+  outputs =
+    {
+      nixpkgs,
+      utils,
+      home-manager,
+      old-nixpkgs,
+      unstable,
+      ...
+    }:
     let
       pkgs = nixpkgs.legacyPackages.x86_64-linux;
       darwinPkgs = (import nixpkgs { system = "aarch64-darwin"; });
@@ -27,13 +35,21 @@
         claude-code = prev.callPackage (./. + "/pkgs/claude-code.nix") { };
       };
 
-      allowUnfree = ({ config, pkgs, ... }: {
-        nixpkgs.overlays = [ overlay-old overlay-unstable overlay-custom ];
-        nixpkgs.config.allowUnfree = true;
-        nixpkgs.config.allowUnsupportedSystem = true;
-        nixpkgs.config.allowBroken = true;
-      });
-    in {
+      allowUnfree = (
+        { config, pkgs, ... }:
+        {
+          nixpkgs.overlays = [
+            overlay-old
+            overlay-unstable
+            overlay-custom
+          ];
+          nixpkgs.config.allowUnfree = true;
+          nixpkgs.config.allowUnsupportedSystem = true;
+          nixpkgs.config.allowBroken = true;
+        }
+      );
+    in
+    {
       homeConfigurations = {
         "eiji" = home-manager.lib.homeManagerConfiguration {
           inherit pkgs;

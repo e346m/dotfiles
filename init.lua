@@ -60,8 +60,17 @@ vim.g.blamer_prefix = " > "
 api.nvim_set_keymap("n", "j", "gj", { noremap = true })
 api.nvim_set_keymap("n", "k", "gk", { noremap = true })
 
----- panel switch
-api.nvim_set_keymap("n", "<C-h>", "<C-w>h", { noremap = true })
+---- panel switch (with Claude Code integration)
+local function smart_nav_left()
+	local current_win = vim.api.nvim_get_current_win()
+	vim.cmd("wincmd h")
+	-- If we didn't move (already at leftmost), try Claude Code
+	if vim.api.nvim_get_current_win() == current_win then
+		vim.cmd("ClaudeCodeFocus")
+	end
+end
+
+api.nvim_set_keymap("n", "<C-h>", "", { noremap = true, callback = smart_nav_left })
 api.nvim_set_keymap("n", "<C-l>", "<C-w>l", { noremap = true })
 api.nvim_set_keymap("n", "<C-k>", "<C-w>k", { noremap = true })
 api.nvim_set_keymap("n", "<C-j>", "<C-w>j", { noremap = true })
@@ -306,13 +315,12 @@ vim.api.nvim_create_autocmd({ "BufWritePost" }, {
 require("conform").setup({
 	formatters_by_ft = {
 		lua = { "stylua" },
-		-- Use a sub-list to run only the first available formatter
-		javascript = { { "biome", "prettierd", "prettier" } },
-		typescript = { { "biome", "prettierd", "prettier" } },
-		javascriptreact = { { "biome", "prettierd", "prettier" } },
-		typescriptreact = { { "biome", "prettierd", "prettier" } },
-		json = { { "biome", "prettierd", "prettier" } },
-		graphql = { { "biome", "prettierd", "prettier" } },
+		javascript = { "biome", "prettierd", "prettier", stop_after_first = true },
+		typescript = { "biome", "prettierd", "prettier", stop_after_first = true },
+		javascriptreact = { "biome", "prettierd", "prettier", stop_after_first = true },
+		typescriptreact = { "biome", "prettierd", "prettier", stop_after_first = true },
+		json = { "biome", "prettierd", "prettier", stop_after_first = true },
+		graphql = { "biome", "prettierd", "prettier", stop_after_first = true },
 	},
 })
 
@@ -351,6 +359,8 @@ require("claudecode").setup({
 	git_repo_cwd = true, -- Automatically resolve git root directory
 	-- Use snacks.nvim if available for better terminal experience
 	--
+	config = true,
+
 	terminal = {
 		split_side = "left", -- "left" or "right"
 		split_width_percentage = 0.30,
