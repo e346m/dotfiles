@@ -7,31 +7,31 @@
 
 stdenv.mkDerivation rec {
   pname = "claude-code";
-  version = "2.0.1";
+  version = "2.0.35";
 
   src = fetchurl {
     url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-${version}.tgz";
-    hash = "sha256-Emx9dS/G7iTwjC22+nDc9FloM/SNi95aHw2NLxSc4CM=";
+    hash = "sha256-WTbUW++l0ZyfD5OTM90e+lKIWAGCYJ7vDmDBXN0TtOw=";
   };
 
   nativeBuildInputs = [ makeWrapper ];
 
   installPhase = ''
     runHook preInstall
-    
+
     mkdir -p $out/bin
     mkdir -p $out/lib/node_modules/claude-code
-    
+
     # Copy the npm package contents
     cp -r . $out/lib/node_modules/claude-code/
-    
+
     # Create wrapper scripts for both claude and claude-code
     makeWrapper ${nodejs}/bin/node $out/bin/claude \
       --add-flags "$out/lib/node_modules/claude-code/cli.js"
-      
+
     makeWrapper ${nodejs}/bin/node $out/bin/claude-code \
       --add-flags "$out/lib/node_modules/claude-code/cli.js"
-    
+
     runHook postInstall
   '';
 

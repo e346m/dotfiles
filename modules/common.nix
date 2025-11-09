@@ -16,7 +16,6 @@
     ripgrep
     fd
     tree
-    vscode
     docker
     jdk8
     gnupg
@@ -92,10 +91,11 @@
       la = "ls -A";
       ll = "ls -lh";
       vim = "nvim";
+
       demo-sql-proxy = "cloud-sql-proxy \"upsidr-prod-chronos:asia-northeast1:demo-client-api?port=43306\"";
-      staging-sql-proxy = "cloud-sql-proxy \"upsidr-staging-chronos:asia-northeast1:client-api?port=13306\"";
-      production-read-sql-proxy = "cloud-sql-proxy \"upsidr-prod-chronos:asia-northeast1:client-api-read-replica-bi?port=23306\"";
-      production-write-sql-proxy = "cloud-sql-proxy \"upsidr-prod-chronos:asia-northeast1:client-api?port=53306\"";
+      staging-sql-proxy = "cloud-sql-proxy \"upsidr-staging-chronos:asia-northeast1:client-api-80?port=13306\"";
+      production-read-sql-proxy = "cloud-sql-proxy \"upsidr-prod-chronos:asia-northeast1:client-api-80-replica?port=23306\"";
+      production-write-sql-proxy = "cloud-sql-proxy \"upsidr-prod-chronos:asia-northeast1:client-api-80?port=53306\"";
       reward-staging-sql-proxy = "cloud-sql-proxy \"upsidr-staging-chronos:asia-northeast1:reward-point?port=3315\"";
       theseus-staging-sql-proxy = "cloud-sql-proxy \"upsidr-staging-theseus:asia-northeast1:theseus?port=4315\" --auto-iam-authn";
       hermes-staging-sql-proxy = "cloud-sql-proxy \"upsidr-staging-chronos:asia-northeast1:hermes?port=3310\"";
@@ -189,7 +189,7 @@
     enable = true;
     historyLimit = 10000;
     shell = "${pkgs.zsh}/bin/zsh";
-    terminal = "screen-256color";
+    terminal = "tmux-256color";
     keyMode = "vi";
     escapeTime = 10;
     extraConfig = ''
@@ -210,7 +210,7 @@
       bind k select-pane -U
       bind l select-pane -L
 
-      set-option -ga terminal-overrides ",$TERM:Tc"
+      set-option -ga terminal-overrides ",xterm-256color:Tc"
 
       # avoid copy-pipe conflict
       set -s set-clipboard on
