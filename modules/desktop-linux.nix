@@ -9,7 +9,6 @@
     username = "eiji";
     homeDirectory = "/home/eiji";
     packages = with pkgs; [
-      opera
       dbeaver-bin
       mysql80
       trash-cli
