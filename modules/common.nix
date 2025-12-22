@@ -101,7 +101,7 @@
       hermes-staging-sql-proxy = "cloud-sql-proxy \"upsidr-staging-chronos:asia-northeast1:hermes?port=3310\"";
       hermes-prod-sql-proxy = "cloud-sql-proxy \"upsidr-prod-chronos:asia-northeast1:hermes?port=13310\"";
     };
-    initExtra = ''
+    initContent = ''
 
       if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
         . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
