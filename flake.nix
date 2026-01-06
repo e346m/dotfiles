@@ -11,6 +11,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     utils.url = "github:numtide/flake-utils";
+    roc.url = "github:roc-lang/roc";
   };
 
   outputs =
@@ -20,6 +21,7 @@
       home-manager,
       old-nixpkgs,
       unstable,
+      roc,
       ...
     }:
     let
@@ -34,6 +36,8 @@
       overlay-custom = final: prev: {
         claude-code = prev.callPackage (./. + "/pkgs/claude-code.nix") { };
         gemini-cli = unstable.legacyPackages.${prev.system}.gemini-cli;
+        roc = roc.packages.${prev.system}.cli;
+        roc-ls = roc.packages.${prev.system}.lang-server;
       };
 
       allowUnfree = (

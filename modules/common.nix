@@ -35,6 +35,7 @@
     gemini-cli
     graphite-cli
     harlequin
+    roc
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -264,6 +265,7 @@
           p.graphql
           p.hcl
           p.cpp
+          p.roc
           # format
           p.yaml
           p.json
@@ -331,6 +333,7 @@
       terraform-ls
       pyright
       htmx-lsp
+      roc-ls
     ];
   };
 

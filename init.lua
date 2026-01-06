@@ -278,6 +278,9 @@ vim.api.nvim_create_autocmd({ "BufWritePre" }, {
 })
 lspconfig.htmx.setup({})
 
+-- Roc language server
+lspconfig.roc_ls.setup({})
+
 vim.api.nvim_create_autocmd("BufWritePre", {
 	pattern = "*.go",
 	callback = function()
