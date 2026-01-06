@@ -33,6 +33,7 @@
     ollama
     claude-code
     gemini-cli
+    graphite-cli
     harlequin
   ];
 

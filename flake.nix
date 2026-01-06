@@ -33,6 +33,7 @@
       };
       overlay-custom = final: prev: {
         claude-code = prev.callPackage (./. + "/pkgs/claude-code.nix") { };
+        gemini-cli = unstable.legacyPackages.${prev.system}.gemini-cli;
       };
 
       allowUnfree = (
