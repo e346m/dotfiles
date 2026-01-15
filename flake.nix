@@ -36,6 +36,7 @@
       overlay-custom = final: prev: {
         claude-code = prev.callPackage (./. + "/pkgs/claude-code.nix") { };
         gemini-cli = unstable.legacyPackages.${prev.system}.gemini-cli;
+        yazi = unstable.legacyPackages.${prev.system}.yazi;
         roc = roc.packages.${prev.system}.cli;
         roc-ls = roc.packages.${prev.system}.lang-server;
       };
