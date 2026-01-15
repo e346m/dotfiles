@@ -240,6 +240,22 @@
       set-option -g mouse on
       bind -n WheelUpPane if-shell -F -t = "#{mouse_any_flag}" "send-keys -M" "if -Ft= '#{pane_in_mode}' 'send-keys -M' 'select-pane -t=; copy-mode -e; send-keys -M'"
       bind -n WheelDownPane select-pane -t= \; send-keys -M
+
+      # --- Nested tmux: F12 to toggle local/remote control ---
+      # F12 to disable local tmux (pass through to remote)
+      bind -T root F12 \
+        set prefix None \;\
+        set key-table off \;\
+        set status-style "bg=colour238" \;\
+        if -F '#{pane_in_mode}' 'send-keys -X cancel' \;\
+        refresh-client -S
+
+      # F12 in off mode to re-enable local tmux
+      bind -T off F12 \
+        set -u prefix \;\
+        set -u key-table \;\
+        set -u status-style \;\
+        refresh-client -S
     '';
   };
 
