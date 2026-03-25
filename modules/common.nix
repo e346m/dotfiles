@@ -32,6 +32,8 @@
     kustomize
     ollama
     claude-code
+    guard-hook
+    googleworkspace-cli
     gemini-cli
     graphite-cli
     harlequin
@@ -108,6 +110,11 @@
 
       if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
         . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
+      fi
+
+      # Load git-crypt encrypted secrets
+      if [ -f "$HOME/.config/home-manager/secrets/gws.env" ]; then
+        source "$HOME/.config/home-manager/secrets/gws.env"
       fi
 
       eval "$(direnv hook zsh)"

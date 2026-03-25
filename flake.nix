@@ -35,6 +35,8 @@
       };
       overlay-custom = final: prev: {
         claude-code = prev.callPackage (./. + "/pkgs/claude-code.nix") { };
+        guard-hook = prev.callPackage (./. + "/pkgs/guard-hook.nix") { };
+        googleworkspace-cli = prev.callPackage (./. + "/pkgs/googleworkspace-cli.nix") { };
         gemini-cli = unstable.legacyPackages.${prev.system}.gemini-cli;
         yazi = unstable.legacyPackages.${prev.system}.yazi;
         roc = roc.packages.${prev.system}.cli;
