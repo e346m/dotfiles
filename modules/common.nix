@@ -113,8 +113,8 @@
       fi
 
       # Load git-crypt encrypted secrets
-      if [ -f "$HOME/.config/home-manager/secrets/gws.env" ]; then
-        source "$HOME/.config/home-manager/secrets/gws.env"
+      if [ -f "$HOME/.config/home-manager/secrets/gwc.env" ]; then
+        source "$HOME/.config/home-manager/secrets/gwc.env"
       fi
 
       eval "$(direnv hook zsh)"

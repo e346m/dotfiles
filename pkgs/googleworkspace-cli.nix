@@ -43,7 +43,7 @@ stdenv.mkDerivation {
     runHook preInstall
 
     mkdir -p $out/bin
-    install -m755 google-workspace-cli-*/gws $out/bin/gws
+    install -m755 google-workspace-cli-*/gws $out/bin/gwc
 
     runHook postInstall
   '';
@@ -54,6 +54,6 @@ stdenv.mkDerivation {
     license = licenses.asl20;
     maintainers = with maintainers; [ ];
     platforms = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
-    mainProgram = "gws";
+    mainProgram = "gwc";
   };
 }
