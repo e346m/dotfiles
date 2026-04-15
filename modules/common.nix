@@ -117,6 +117,11 @@
         source "$HOME/.config/home-manager/secrets/gwc.env"
       fi
 
+      # Load GitHub token for Nix access
+      if [ -f "$HOME/.config/home-manager/secrets/github-token" ]; then
+        export NIX_CONFIG="access-tokens = github.com=$(cat "$HOME/.config/home-manager/secrets/github-token")"
+      fi
+
       eval "$(direnv hook zsh)"
 
       function cdg()
