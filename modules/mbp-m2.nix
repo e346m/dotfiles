@@ -12,6 +12,7 @@
       ffmpeg-full
       git-filter-repo
       devbox
+      guard-hook
     ];
   };
 }

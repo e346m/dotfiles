@@ -10,15 +10,15 @@ let
   platforms = {
     x86_64-linux = {
       artifact = "google-workspace-cli-x86_64-unknown-linux-gnu.tar.gz";
-      hash = "sha256-JZRWbrZV2kW0a6qByg+bXbg0MIycfave88SwacztbEY=";
+      hash = "sha256-uyoEzgPCWgSJGLnYV635k1LGMqgo7hjbyExumeatujU=";
     };
     aarch64-linux = {
       artifact = "google-workspace-cli-aarch64-unknown-linux-gnu.tar.gz";
-      hash = "sha256-JXL8XER9bSehQuFr4UolYYBYM28ycoIJ9JX0O0r0dFA=";
+      hash = "sha256-OWKHpHBnqvSZX/Zwx57cJXgy6TNRdKdTXr/oCaDnfy4=";
     };
     x86_64-darwin = {
       artifact = "google-workspace-cli-x86_64-apple-darwin.tar.gz";
-      hash = "sha256-KbgZCKoQXzA1IrpayJdfFdH1ZpkeNtQBjDaxwSvCd/4=";
+      hash = "sha256-CgtufifRtvilJtvVlbLbvZfMrO+T666h0mCrV6H80mU=";
     };
     aarch64-darwin = {
       artifact = "google-workspace-cli-aarch64-apple-darwin.tar.gz";

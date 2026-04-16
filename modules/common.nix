@@ -32,7 +32,6 @@
     kustomize
     ollama
     claude-code
-    guard-hook
     googleworkspace-cli
     gemini-cli
     graphite-cli
