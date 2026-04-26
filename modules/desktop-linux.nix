@@ -14,7 +14,14 @@
       trash-cli
       wl-clipboard
       vulkan-tools
+      codex
       lima
     ];
   };
+
+  programs.zsh.initExtra = ''
+    if [ -f "$HOME/.config/home-manager/secrets/gwc-nixos.env" ]; then
+      source "$HOME/.config/home-manager/secrets/gwc-nixos.env"
+    fi
+  '';
 }

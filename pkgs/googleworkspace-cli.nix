@@ -1,6 +1,7 @@
 { lib
 , stdenv
 , fetchurl
+, autoPatchelfHook
 }:
 
 let
@@ -36,6 +37,9 @@ stdenv.mkDerivation {
     url = "${baseUrl}/${platformInfo.artifact}";
     hash = platformInfo.hash;
   };
+
+  nativeBuildInputs = [ autoPatchelfHook ];
+  buildInputs = [ stdenv.cc.cc.lib ];
 
   sourceRoot = ".";
 
