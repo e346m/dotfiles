@@ -41,6 +41,7 @@
         googleworkspace-cli = prev.callPackage (./. + "/pkgs/googleworkspace-cli.nix") { };
         gemini-cli = unstable.legacyPackages.${prev.system}.gemini-cli;
         yazi = unstable.legacyPackages.${prev.system}.yazi;
+        mcp-grafana = unstable.legacyPackages.${prev.system}.mcp-grafana;
         roc = roc.packages.${prev.system}.cli;
         roc-ls = roc.packages.${prev.system}.lang-server;
         mymate = mymate.packages.${prev.system}.default;
