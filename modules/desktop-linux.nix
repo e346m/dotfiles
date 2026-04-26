@@ -19,7 +19,7 @@
     ];
   };
 
-  programs.zsh.initExtra = ''
+  programs.zsh.initContent = lib.mkAfter ''
     if [ -f "$HOME/.config/home-manager/secrets/gwc-nixos.env" ]; then
       source "$HOME/.config/home-manager/secrets/gwc-nixos.env"
     fi
