@@ -12,6 +12,7 @@
     };
     utils.url = "github:numtide/flake-utils";
     roc.url = "github:roc-lang/roc";
+    mymate.url = "github:upsidr/mymate";
   };
 
   outputs =
@@ -22,6 +23,7 @@
       old-nixpkgs,
       unstable,
       roc,
+      mymate,
       ...
     }:
     let
@@ -41,6 +43,7 @@
         yazi = unstable.legacyPackages.${prev.system}.yazi;
         roc = roc.packages.${prev.system}.cli;
         roc-ls = roc.packages.${prev.system}.lang-server;
+        mymate = mymate.packages.${prev.system}.default;
       };
 
       allowUnfree = (

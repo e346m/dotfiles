@@ -14,6 +14,7 @@
       trash-cli
       wl-clipboard
       vulkan-tools
+      lima
     ];
   };
 }

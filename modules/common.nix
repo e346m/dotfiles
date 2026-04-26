@@ -33,6 +33,7 @@
     ollama
     claude-code
     googleworkspace-cli
+    mymate
     gemini-cli
     graphite-cli
     harlequin
