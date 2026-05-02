@@ -39,7 +39,9 @@
         claude-code = prev.callPackage (./. + "/pkgs/claude-code.nix") { };
         guard-hook = prev.callPackage (./. + "/pkgs/guard-hook.nix") { };
         googleworkspace-cli = prev.callPackage (./. + "/pkgs/googleworkspace-cli.nix") { };
+        tsm = prev.callPackage (./. + "/pkgs/tsm.nix") { };
         gemini-cli = unstable.legacyPackages.${prev.system}.gemini-cli;
+        ghostty = unstable.legacyPackages.${prev.system}.ghostty;
         yazi = unstable.legacyPackages.${prev.system}.yazi;
         mcp-grafana = unstable.legacyPackages.${prev.system}.mcp-grafana;
         roc = roc.packages.${prev.system}.cli;

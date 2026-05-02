@@ -16,6 +16,9 @@
       vulkan-tools
       codex
       lima
+      tsm
+      ghostty
+      hicolor-icon-theme
     ];
   };
 
