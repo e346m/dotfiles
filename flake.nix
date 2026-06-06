@@ -37,6 +37,7 @@
       };
       overlay-custom = final: prev: {
         claude-code = prev.callPackage (./. + "/pkgs/claude-code.nix") { };
+        antigravity = prev.callPackage (./. + "/pkgs/antigravity.nix") { };
         guard-hook = prev.callPackage (./. + "/pkgs/guard-hook.nix") { };
         googleworkspace-cli = prev.callPackage (./. + "/pkgs/googleworkspace-cli.nix") { };
         tsm = prev.callPackage (./. + "/pkgs/tsm.nix") { };

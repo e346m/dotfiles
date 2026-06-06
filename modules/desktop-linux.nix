@@ -9,6 +9,7 @@
     username = "eiji";
     homeDirectory = "/home/eiji";
     packages = with pkgs; [
+      antigravity  # Antigravity CLI (agy) — Linux only
       dbeaver-bin
       mysql80
       trash-cli
