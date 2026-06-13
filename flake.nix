@@ -13,6 +13,7 @@
     utils.url = "github:numtide/flake-utils";
     roc.url = "github:roc-lang/roc";
     mymate.url = "github:upsidr/mymate";
+    whisrs.url = "github:y0sif/whisrs";
   };
 
   outputs =
@@ -24,6 +25,7 @@
       unstable,
       roc,
       mymate,
+      whisrs,
       ...
     }:
     let
@@ -41,13 +43,15 @@
         guard-hook = prev.callPackage (./. + "/pkgs/guard-hook.nix") { };
         googleworkspace-cli = prev.callPackage (./. + "/pkgs/googleworkspace-cli.nix") { };
         tsm = prev.callPackage (./. + "/pkgs/tsm.nix") { };
-        gemini-cli = unstable.legacyPackages.${prev.system}.gemini-cli;
+        llama-diffusion = prev.callPackage (./. + "/pkgs/llama-diffusion.nix") { };
+        cursor-cli = (import unstable { inherit (prev) system; config.allowUnfree = true; }).cursor-cli;
         ghostty = unstable.legacyPackages.${prev.system}.ghostty;
         yazi = unstable.legacyPackages.${prev.system}.yazi;
         mcp-grafana = unstable.legacyPackages.${prev.system}.mcp-grafana;
         roc = roc.packages.${prev.system}.cli;
         roc-ls = roc.packages.${prev.system}.lang-server;
         mymate = mymate.packages.${prev.system}.default;
+        whisrs = whisrs.packages.${prev.system}.default;
       };
 
       allowUnfree = (

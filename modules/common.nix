@@ -31,10 +31,10 @@
     kubeseal
     kustomize
     ollama
+    llama-diffusion
     claude-code
     googleworkspace-cli
     mymate
-    gemini-cli
     graphite-cli
     harlequin
     roc
@@ -198,6 +198,7 @@
     terminal = "tmux-256color";
     keyMode = "vi";
     escapeTime = 10;
+    mouse = true;
     extraConfig = ''
       bind C-b next-window
 
@@ -233,21 +234,20 @@
 
       bind -T copy-mode-vi v send-keys -X begin-selection
 
-      # support y yank
-      bind -T copy-mode-vi y send-keys -X copy-pipe-and-cancel
+      # support y yank (stay in copy-mode after yank)
+      bind -T copy-mode-vi y send-keys -X copy-pipe-no-clear
 
-      # support y yank via mouse selection
-      bind -Tcopy-mode-vi MouseDragEnd1Pane send -X copy-pipe-and-cancel
+      # support y yank via mouse selection (stay in copy-mode after yank)
+      bind -Tcopy-mode-vi MouseDragEnd1Pane send -X copy-pipe-no-clear
 
 
       # mouse
-      set-option -g mouse on
       bind -n WheelUpPane if-shell -F -t = "#{mouse_any_flag}" "send-keys -M" "if -Ft= '#{pane_in_mode}' 'send-keys -M' 'select-pane -t=; copy-mode -e; send-keys -M'"
       bind -n WheelDownPane select-pane -t= \; send-keys -M
 
-      # smoother wheel scroll inside copy-mode
-      bind -T copy-mode-vi WheelUpPane   send-keys -X -N 3 scroll-up
-      bind -T copy-mode-vi WheelDownPane send-keys -X -N 3 scroll-down
+      # smoother wheel scroll inside copy-mode (1 line per wheel tick — finest grain)
+      bind -T copy-mode-vi WheelUpPane   send-keys -X -N 1 scroll-up
+      bind -T copy-mode-vi WheelDownPane send-keys -X -N 1 scroll-down
 
       # --- Nested tmux: F12 to toggle local/remote control ---
       # F12 to disable local tmux (pass through to remote)
