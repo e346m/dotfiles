@@ -52,6 +52,7 @@
         roc-ls = roc.packages.${prev.system}.lang-server;
         mymate = mymate.packages.${prev.system}.default;
         whisrs = whisrs.packages.${prev.system}.default;
+        super = unstable.legacyPackages.${prev.system}.super;
       };
 
       allowUnfree = (
