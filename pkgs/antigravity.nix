@@ -6,10 +6,10 @@
 }:
 
 let
-  version = "1.0.6";
+  version = "1.0.10";
   # The storage path embeds an opaque build/execution id alongside the version.
   # The update script keeps both in sync from the CLI auto-updater manifest.
-  build = "6458082025406464";
+  build = "6349723456634880";
   baseUrl = "https://storage.googleapis.com/antigravity-public/antigravity-cli/${version}-${build}";
 
   # Linux only: Antigravity CLI (`agy`) is a cgo Go binary that just needs the
@@ -18,12 +18,12 @@ let
     x86_64-linux = {
       sub = "linux-x64";
       file = "cli_linux_x64.tar.gz";
-      hash = "sha512-G1eXe+CDmLA0TvUBkIloPAqumClUXN8wVsmh0CuUnqmNtuZD75bvT2h3ZU9NSNUmcDXviidlKo4CP2W5HAbfdg==";
+      hash = "sha512-RXgoQPjOFCB+ybi5YuduZPDnTnkgAA8XYYD3IE4PieYcDkdcmitIWcyQ8IwhSEi52QrBw0TvmH95bidoIAeN8Q==";
     };
     aarch64-linux = {
       sub = "linux-arm";
       file = "cli_linux_arm64.tar.gz";
-      hash = "sha512-+ZZ/qMMYwx94vML4E8dU4Ob3usgDAURWHVswMVVyDajKBIXspLbIFCmRcFJqHozJ3J7CCR/Mwem9uGTduWEHVw==";
+      hash = "sha512-le3F/mw7Rburp2g+dIx+rqXxlQ9k7s8IPNU/O0GWH88T/atoxk1wLX5bdJxj3GOFxbAVmoXtxu0SqdGjI+Ye4A==";
     };
   };
 
