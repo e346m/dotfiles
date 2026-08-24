@@ -10,8 +10,10 @@
     homeDirectory = "/home/eiji";
     packages = with pkgs; [
       antigravity  # Antigravity CLI (agy) — Linux only
+      cloudflared
       cursor-cli
       dbeaver-bin
+      herdr
       mysql80
       trash-cli
       wl-clipboard
@@ -65,6 +67,19 @@
     ];
   };
 
+  # Managed tunnel config; credentials stay as real files under ~/.cloudflared/.
+  home.file.".cloudflared/config.yml".text = ''
+    tunnel: 165756a9-9276-481b-a2c1-0cf45009f750
+    credentials-file: /home/eiji/.cloudflared/165756a9-9276-481b-a2c1-0cf45009f750.json
+
+    ingress:
+      - hostname: banto.mishiro.dev
+        service: http://127.0.0.1:4000
+      - hostname: nixos.confide.jp
+        service: ssh://127.0.0.1:22
+      - service: http_status:404
+  '';
+
   # ydotool が clipboard paste で必要とするバックグラウンドデーモン。
   # /dev/uinput を要求するが、eiji は input グループ所属なのでアクセス可能。
   systemd.user.services.ydotoold = {
@@ -77,6 +92,21 @@
       ExecStart = "${pkgs.ydotool}/bin/ydotoold";
       Restart = "on-failure";
       RestartSec = "3";
+    };
+    Install.WantedBy = [ "default.target" ];
+  };
+
+  systemd.user.services.cloudflared = {
+    Unit = {
+      Description = "Cloudflare Tunnel (banto)";
+      After = [ "network-online.target" ];
+      Wants = [ "network-online.target" ];
+    };
+    Service = {
+      ExecStart = "${pkgs.cloudflared}/bin/cloudflared tunnel --config %h/.cloudflared/config.yml --no-autoupdate run";
+      Restart = "on-failure";
+      RestartSec = "5s";
+      Environment = [ "TUNNEL_LOGLEVEL=debug" ];
     };
     Install.WantedBy = [ "default.target" ];
   };

@@ -45,6 +45,7 @@
         tsm = prev.callPackage (./. + "/pkgs/tsm.nix") { };
         llama-diffusion = prev.callPackage (./. + "/pkgs/llama-diffusion.nix") { };
         cursor-cli = (import unstable { inherit (prev) system; config.allowUnfree = true; }).cursor-cli;
+        herdr = unstable.legacyPackages.${prev.system}.herdr;
         ghostty = unstable.legacyPackages.${prev.system}.ghostty;
         yazi = unstable.legacyPackages.${prev.system}.yazi;
         mcp-grafana = unstable.legacyPackages.${prev.system}.mcp-grafana;
