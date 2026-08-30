@@ -68,6 +68,18 @@
     ];
   };
 
+  # eiji と eiji.346 (uid 1000 を共有する Cloudflare Access SSH 用エイリアス) の
+  # どちらでログインしても $USER を getpwuid(1000) の正式名 "eiji" に固定する。
+  # ibus-daemon は $USER と実際のログインユーザー名の不一致を sudo/su 経由の
+  # 起動とみなして拒否するため、eiji.346 でログインすると日本語入力が起動しない。
+  # home.sessionVariables は USER/LOGNAME/USERNAME を予約変数として除外するため
+  # environment.d ファイルを直接書く。
+  home.file.".config/environment.d/05-user-identity.conf".text = ''
+    USER=eiji
+    LOGNAME=eiji
+    USERNAME=eiji
+  '';
+
   # Managed tunnel config; credentials stay as real files under ~/.cloudflared/.
   home.file.".cloudflared/config.yml".text = ''
     tunnel: 165756a9-9276-481b-a2c1-0cf45009f750
