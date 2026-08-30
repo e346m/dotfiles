@@ -11,6 +11,7 @@
     packages = with pkgs; [
       antigravity  # Antigravity CLI (agy) — Linux only
       cloudflared
+      code-cursor
       cursor-cli
       dbeaver-bin
       herdr
