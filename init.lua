@@ -11,6 +11,8 @@ vim.o.laststatus = 3 --ステータスラインを常に表示
 vim.o.cursorline = true
 vim.o.colorcolumn = "100"
 vim.o.wrap = true
+vim.o.smoothscroll = true
+vim.o.mousescroll = "ver:1,hor:6"
 vim.o.backspace = "indent,eol,start"
 
 -- tab
@@ -60,17 +62,8 @@ vim.g.blamer_prefix = " > "
 api.nvim_set_keymap("n", "j", "gj", { noremap = true })
 api.nvim_set_keymap("n", "k", "gk", { noremap = true })
 
----- panel switch (with Claude Code integration)
-local function smart_nav_left()
-	local current_win = vim.api.nvim_get_current_win()
-	vim.cmd("wincmd h")
-	-- If we didn't move (already at leftmost), try Claude Code
-	if vim.api.nvim_get_current_win() == current_win then
-		vim.cmd("ClaudeCodeFocus")
-	end
-end
-
-api.nvim_set_keymap("n", "<C-h>", "", { noremap = true, callback = smart_nav_left })
+---- panel switch
+api.nvim_set_keymap("n", "<C-h>", "<C-w>h", { noremap = true })
 api.nvim_set_keymap("n", "<C-l>", "<C-w>l", { noremap = true })
 api.nvim_set_keymap("n", "<C-k>", "<C-w>k", { noremap = true })
 api.nvim_set_keymap("n", "<C-j>", "<C-w>j", { noremap = true })
@@ -81,7 +74,58 @@ api.nvim_set_keymap("n", "<Space>s", ":<Esc>:source $MYVIMRC<Enter>", { noremap 
 
 ---- split window
 api.nvim_set_keymap("n", "<C-g>", ":<C-U>vsplit<Cr>", { noremap = true })
-api.nvim_set_keymap("n", "<C-e>", ":<C-U>Fern . -reveal=%<Cr>", { noremap = true })
+
+-- neo-tree as a persistent left drawer (Agentic occupies the right)
+require("neo-tree").setup({
+	close_if_last_window = false,
+	popup_border_style = "single",
+	sources = { "filesystem", "git_status", "buffers" },
+	source_selector = {
+		winbar = true,
+		sources = {
+			{ source = "filesystem", display_name = " Files " },
+			{ source = "git_status", display_name = " Git " },
+		},
+	},
+	window = {
+		position = "left",
+		width = 28,
+		mappings = {
+			["<C-h>"] = "none",
+			["<C-l>"] = "none",
+			["<C-j>"] = "none",
+			["<C-k>"] = "none",
+			["<"] = "prev_source",
+			[">"] = "next_source",
+		},
+	},
+	filesystem = {
+		follow_current_file = { enabled = true, leave_dirs_open = true },
+		hijack_netrw_behavior = "disabled",
+		use_libuv_file_watcher = true,
+		filtered_items = {
+			hide_dotfiles = false,
+			hide_gitignored = true,
+		},
+	},
+})
+
+vim.keymap.set("n", "<C-e>", function()
+	require("neo-tree.command").execute({
+		source = "filesystem",
+		toggle = true,
+		reveal = true,
+		position = "left",
+	})
+end, { noremap = true, silent = true, desc = "Toggle file tree" })
+
+vim.keymap.set("n", "<leader>E", function()
+	require("neo-tree.command").execute({
+		source = "git_status",
+		toggle = true,
+		position = "left",
+	})
+end, { noremap = true, silent = true, desc = "Toggle git changes tree" })
 
 ---- Add leader shortcuts
 vim.api.nvim_set_keymap(
@@ -137,123 +181,108 @@ api.nvim_set_keymap("i", "''", "''<Left>", { noremap = true })
 api.nvim_set_keymap("i", "``", "``<Left>", { noremap = true })
 api.nvim_set_keymap("i", ",", ",<Space>", { noremap = true })
 
-local fn = vim.fn
-
-vim.opt.completeopt = "menu,menuone,noselect"
+-- Native insert-mode completion (replaces nvim-cmp).
+vim.o.completeopt = "menu,menuone,noselect,popup"
+vim.o.autocomplete = true
+vim.o.pumborder = "single"
+vim.o.winborder = "single"
 
 require("snippy").setup({
 	mappings = {
-		is = {
-			["<Tab>"] = "expand_or_advance",
-			["<S-Tab>"] = "previous",
-		},
 		nx = {
 			["<leader>x"] = "cut_text",
 		},
 	},
 })
 
-local cmp = require("cmp")
-cmp.setup({
-	formatting = {
-		format = function(entry, vim_item)
-			vim_item.menu = "menu"
+local function pum_visible()
+	return vim.fn.pumvisible() == 1
+end
 
-			vim_item.menu = ({
-				nvim_lsp = "[LSP]",
-				look = "[Dict]",
-				buffer = "[Buffer]",
-			})[entry.source.name]
-			return vim_item
-		end,
-	},
-	snippet = {
-		expand = function(args)
-			require("snippy").expand_snippet(args.body)
-		end,
-	},
-	window = {
-		completion = cmp.config.window.bordered({
-			border = "single",
-		}),
-		documentation = cmp.config.window.bordered({
-			border = "single",
-		}),
-	},
-	mapping = cmp.mapping.preset.insert({
-		["<Tab>"] = cmp.mapping.select_next_item(),
-		["<S-Tab>"] = cmp.mapping.select_prev_item(),
-		["<C-b>"] = cmp.mapping.scroll_docs(-4),
-		["<C-f>"] = cmp.mapping.scroll_docs(4),
-		["<C-Space>"] = cmp.mapping.complete(),
-		["<C-e>"] = cmp.mapping.abort(),
-		["<CR>"] = cmp.mapping.confirm({ select = true }),
-	}),
-	sources = cmp.config.sources({
-		{ name = "snippy" },
-		{ name = "path" },
-	}, {
-		{ name = "nvim_lsp", keyword_length = 3 },
-		{ name = "buffer", keyword_length = 4 },
-	}),
-})
+vim.keymap.set({ "i", "s" }, "<Tab>", function()
+	if pum_visible() then
+		return "<C-n>"
+	end
+	if require("snippy").can_expand_or_advance() then
+		return "<Cmd>lua require('snippy').expand_or_advance()<CR>"
+	end
+	return "<Tab>"
+end, { expr = true })
 
-cmp.setup.cmdline({ "/", "?" }, {
-	mapping = cmp.mapping.preset.cmdline(),
-	sources = {
-		{ name = "buffer" },
-	},
+vim.keymap.set({ "i", "s" }, "<S-Tab>", function()
+	if pum_visible() then
+		return "<C-p>"
+	end
+	if require("snippy").can_jump(-1) then
+		return "<Cmd>lua require('snippy').previous()<CR>"
+	end
+	return "<S-Tab>"
+end, { expr = true })
+
+vim.keymap.set("i", "<CR>", function()
+	if not pum_visible() then
+		return "<CR>"
+	end
+	if vim.fn.complete_info({ "selected" }).selected == -1 then
+		return "<C-n><C-y>"
+	end
+	return "<C-y>"
+end, { expr = true })
+
+vim.keymap.set("i", "<C-Space>", function()
+	vim.lsp.completion.get()
+end)
+
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "AgenticInput",
+	callback = function()
+		vim.bo.autocomplete = false
+	end,
 })
 
 vim.api.nvim_create_autocmd("LspAttach", {
 	desc = "LSP actions",
-	callback = function()
-		local bufmap = function(mode, lhs, rhs)
-			local opts = { buffer = true }
-			vim.keymap.set(mode, lhs, rhs, opts)
+	callback = function(ev)
+		local client = vim.lsp.get_client_by_id(ev.data.client_id)
+		if client and client:supports_method("textDocument/completion") then
+			-- Trigger on every keypress so it behaves closer to nvim-cmp.
+			local chars = {}
+			for i = 32, 126 do
+				table.insert(chars, string.char(i))
+			end
+			client.server_capabilities.completionProvider.triggerCharacters = chars
+			vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
 		end
 
-		bufmap("n", "K", "<cmd>lua vim.lsp.buf.hover()<cr>")
-		bufmap("n", "gd", "<cmd>lua vim.lsp.buf.definition()<cr>")
-		bufmap("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<cr>")
-		bufmap("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<cr>")
-		bufmap("n", "go", "<cmd>lua vim.lsp.buf.type_definition()<cr>")
-		bufmap("n", "gr", "<cmd>lua vim.lsp.buf.references()<cr>")
-		bufmap("n", "gs", "<cmd>lua vim.lsp.buf.signature_help()<cr>")
-		bufmap("n", "<F2>", "<cmd>lua vim.lsp.buf.rename()<cr>")
-		bufmap("n", "<F3>", "<cmd>lua vim.lsp.buf.format({async = true})<cr>")
-		bufmap("n", "<F4>", "<cmd>lua vim.lsp.buf.code_action()<cr>")
-		bufmap("x", "<F4>", "<cmd>lua vim.lsp.buf.range_code_action()<cr>")
-		bufmap("n", "gl", "<cmd>lua vim.diagnostic.open_float()<cr>")
-		bufmap("n", "[d", "<cmd>lua vim.diagnostic.goto_prev()<cr>")
-		bufmap("n", "]d", "<cmd>lua vim.diagnostic.goto_next()<cr>")
+		local bufmap = function(mode, lhs, rhs)
+			vim.keymap.set(mode, lhs, rhs, { buffer = true })
+		end
+
+		bufmap("n", "K", vim.lsp.buf.hover)
+		bufmap("n", "gd", vim.lsp.buf.definition)
+		bufmap("n", "gD", vim.lsp.buf.declaration)
+		bufmap("n", "gi", vim.lsp.buf.implementation)
+		bufmap("n", "go", vim.lsp.buf.type_definition)
+		bufmap("n", "gr", vim.lsp.buf.references)
+		bufmap("n", "gs", vim.lsp.buf.signature_help)
+		bufmap("n", "<F2>", vim.lsp.buf.rename)
+		bufmap("n", "<F3>", function()
+			vim.lsp.buf.format({ async = true })
+		end)
+		bufmap("n", "<F4>", vim.lsp.buf.code_action)
+		bufmap("x", "<F4>", vim.lsp.buf.code_action)
+		bufmap("n", "gl", vim.diagnostic.open_float)
+		bufmap("n", "[d", function()
+			vim.diagnostic.jump({ count = -1, float = true })
+		end)
+		bufmap("n", "]d", function()
+			vim.diagnostic.jump({ count = 1, float = true })
+		end)
 	end,
 })
 
-local lspconfig = require("lspconfig")
-local lsp_defaults = lspconfig.util.default_config
-
-lsp_defaults.capabilities =
-	vim.tbl_deep_extend("force", lsp_defaults.capabilities, require("cmp_nvim_lsp").default_capabilities())
-
-lsp_defaults.capabilities.textDocument.completion.completionItem.snippetSupport = false
-
-lspconfig.lua_ls.setup({
-	single_file_support = true,
-	flags = {
-		debounce_text_changes = 150,
-	},
-})
-
-lspconfig.ts_ls.setup({})
-lspconfig.jsonls.setup({})
-lspconfig.dartls.setup({})
-lspconfig.vls.setup({})
-lspconfig.graphql.setup({})
-
--- https://github.com/stevearc/conform.nvim/tree/master
--- null-lsの代替みたいなを使って、formatしたほうがよいか? go以外の言語をサポートする必要もあるし...
-lspconfig.gopls.setup({
+-- nvim-lspconfig still supplies lsp/*.lua server defs; enable them natively.
+vim.lsp.config("gopls", {
 	settings = {
 		gopls = {
 			analyses = {
@@ -264,29 +293,66 @@ lspconfig.gopls.setup({
 		},
 	},
 })
-
-lspconfig.hls.setup({
+vim.lsp.config("hls", {
 	filetypes = { "haskell", "lhaskell", "cabal" },
 })
+-- Default filetypes include TS/JS/MD and steal hover / flood lsp.log.
+vim.lsp.config("htmx", {
+	filetypes = { "html" },
+})
+-- cmd comes from nvim-lspconfig (sets cwd to root). The ruby-lsp on PATH is a
+-- wrapper that isolates GEM_* and skips composed-bundle install.
+vim.lsp.config("ruby_lsp", {
+	filetypes = { "ruby", "eruby" },
+	root_markers = { "Gemfile", ".git" },
+	init_options = {
+		formatter = "auto",
+		addonSettings = {
+			["Ruby LSP Rails"] = {
+				enablePendingMigrationsPrompt = false,
+			},
+		},
+	},
+})
+-- ftplugin/ruby.vim sets keywordprg=ri; nvim's Ruby 3.3.8 then loads
+-- ~/.local/share/gem native exts built for 3.3.10 and crashes.
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = { "ruby", "eruby" },
+	callback = function(ev)
+		vim.bo[ev.buf].keywordprg = ""
+		vim.keymap.set("n", "K", vim.lsp.buf.hover, { buffer = ev.buf, desc = "LSP hover" })
+	end,
+})
 
-lspconfig.terraformls.setup({})
+vim.lsp.enable({
+	"lua_ls",
+	"ts_ls",
+	"jsonls",
+	"graphql",
+	"gopls",
+	"hls",
+	"terraformls",
+	"htmx",
+	"roc_ls",
+	"pyright",
+	"ruby_lsp",
+})
+
+-- https://github.com/stevearc/conform.nvim/tree/master
+-- null-lsの代替みたいなを使って、formatしたほうがよいか? go以外の言語をサポートする必要もあるし...
 vim.api.nvim_create_autocmd({ "BufWritePre" }, {
 	pattern = { "*.tf", "*.tfvars" },
 	callback = function()
 		vim.lsp.buf.format()
 	end,
 })
-lspconfig.htmx.setup({})
-
--- Roc language server
-lspconfig.roc_ls.setup({})
 
 vim.api.nvim_create_autocmd("BufWritePre", {
 	pattern = "*.go",
-	callback = function()
-		local params = vim.lsp.util.make_range_params()
+	callback = function(args)
+		local params = vim.lsp.util.make_range_params(0, "utf-16")
 		params.context = { only = { "source.organizeImports" } }
-		local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction", params)
+		local result = vim.lsp.buf_request_sync(args.buf, "textDocument/codeAction", params)
 		for cid, res in pairs(result or {}) do
 			for _, r in pairs(res.result or {}) do
 				if r.edit then
@@ -309,26 +375,33 @@ require("lint").linters_by_ft = {
 	tsx = { "biomejs" },
 }
 
+local function has_biome_config()
+	return vim.fs.find({ "biome.json", "biome.jsonc" }, {
+		upward = true,
+		path = vim.fn.expand("%:p:h"),
+		stop = vim.fn.expand("~"),
+	})[1] ~= nil
+end
+
 vim.api.nvim_create_autocmd({ "BufWritePost" }, {
 	callback = function()
-		require("lint").try_lint()
+		if has_biome_config() then
+			require("lint").try_lint()
+		end
 	end,
 })
 
 require("conform").setup({
 	formatters_by_ft = {
 		lua = { "stylua" },
-		javascript = { "biome", "prettierd", "prettier", stop_after_first = true },
-		typescript = { "biome", "prettierd", "prettier", stop_after_first = true },
-		javascriptreact = { "biome", "prettierd", "prettier", stop_after_first = true },
-		typescriptreact = { "biome", "prettierd", "prettier", stop_after_first = true },
-		json = { "biome", "prettierd", "prettier", stop_after_first = true },
-		graphql = { "biome", "prettierd", "prettier", stop_after_first = true },
+		javascript = { "prettierd", "prettier", "biome", stop_after_first = true },
+		typescript = { "prettierd", "prettier", "biome", stop_after_first = true },
+		javascriptreact = { "prettierd", "prettier", "biome", stop_after_first = true },
+		typescriptreact = { "prettierd", "prettier", "biome", stop_after_first = true },
+		json = { "prettierd", "prettier", "biome", stop_after_first = true },
+		graphql = { "prettierd", "prettier", "biome", stop_after_first = true },
 	},
 })
-
-require("lspconfig").kotlin_language_server.setup({})
-require("lspconfig").pyright.setup({})
 
 -- LSPのフォーマッターも動いてるし、goに限ってはカスタムのフォーマットも作成しているし、どこかで整理する
 vim.api.nvim_create_autocmd("BufWritePre", {
@@ -338,48 +411,143 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 	end,
 })
 
-vim.api.nvim_command("au BufRead,BufNewFile *.tf set filetype=terraform")
-vim.api.nvim_command("au FileType terraform setlocal filetype=hcl")
-require("nvim-treesitter.configs").setup({
-	highlight = {
-		enable = true,
-		disable = function(lang, buf)
-			if lang == "terraform" then
-				vim.api.nvim_buf_set_option(buf, "filetype", "hcl")
-			end
-			return false
-		end,
-		additional_vim_regex_highlighting = false,
-	},
+vim.api.nvim_command("au BufRead,BufNewFile *.tf,*.tfvars set filetype=terraform")
+vim.treesitter.language.register("hcl", "terraform")
+-- nvim-treesitter main no longer has configs.setup; highlighting is native.
+vim.api.nvim_create_autocmd("FileType", {
+	callback = function(ev)
+		pcall(vim.treesitter.start, ev.buf)
+	end,
 })
 -- vim.treesitter.language.register("glimmer", "hbs")
 vim.cmd("autocmd BufRead,BufNewFile *.hbs set filetype=html")
 
--- Claude Code setup
-require("claudecode").setup({
-	-- Optional: Custom path to Claude Code CLI if needed
-	-- terminal_cmd = "/path/to/claude-code",
-	git_repo_cwd = true, -- Automatically resolve git root directory
-	-- Use snacks.nvim if available for better terminal experience
-	--
-	config = true,
+-- Breadcrumbs: path + LSP/treesitter symbols in the winbar
+vim.o.mousemoveevent = true
+require("dropbar").setup()
+vim.keymap.set("n", "<leader>;", function()
+	require("dropbar.api").pick()
+end, { desc = "Pick dropbar crumb" })
 
-	terminal = {
-		split_side = "left", -- "left" or "right"
-		split_width_percentage = 0.30,
-		provider = "snacks", -- "auto", "snacks", "native", "external", or custom provider table
-		auto_close = true,
+require("render-markdown").setup({
+	file_types = { "markdown", "md", "AgenticChat" },
+	-- Streaming + virt_lines で CursorMoved のたびに描画し直すとカクつく。
+	overrides = {
+		filetype = {
+			AgenticChat = {
+				anti_conceal = { enabled = false },
+				debounce = 200,
+			},
+		},
 	},
 })
 
--- Claude Code keymappings
-vim.keymap.set("n", "<leader>ac", "<cmd>ClaudeCode<cr>", { desc = "Toggle Claude" })
-vim.keymap.set("n", "<leader>af", "<cmd>ClaudeCodeFocus<cr>", { desc = "Focus Claude" })
-vim.keymap.set("n", "<leader>ar", "<cmd>ClaudeCode --resume<cr>", { desc = "Resume Claude" })
-vim.keymap.set("n", "<leader>aC", "<cmd>ClaudeCode --continue<cr>", { desc = "Continue Claude" })
-vim.keymap.set("n", "<leader>am", "<cmd>ClaudeCodeSelectModel<cr>", { desc = "Select Claude model" })
-vim.keymap.set("n", "<leader>ab", "<cmd>ClaudeCodeAdd %<cr>", { desc = "Add current buffer" })
-vim.keymap.set("v", "<leader>as", "<cmd>ClaudeCodeSend<cr>", { desc = "Send to Claude" })
--- Diff management
-vim.keymap.set("n", "<leader>aa", "<cmd>ClaudeCodeDiffAccept<cr>", { desc = "Accept diff" })
-vim.keymap.set("n", "<leader>ad", "<cmd>ClaudeCodeDiffDeny<cr>", { desc = "Deny diff" })
+require("agentic").setup({
+	provider = "cursor-acp",
+	windows = {
+		position = "right",
+		width = "30%",
+		chat = {
+			win_opts = {
+				smoothscroll = true,
+			},
+		},
+	},
+})
+
+vim.keymap.set({ "n", "v" }, "<leader>ac", function()
+	require("agentic").toggle()
+end, { desc = "Toggle Agentic" })
+vim.keymap.set("n", "<leader>af", function()
+	require("agentic").open({ focus_prompt = true })
+end, { desc = "Focus Agentic" })
+vim.keymap.set("n", "<leader>ar", function()
+	require("agentic").restore_session()
+end, { desc = "Restore Agentic session" })
+vim.keymap.set({ "n", "v" }, "<leader>an", function()
+	require("agentic").new_session()
+end, { desc = "New Agentic session" })
+vim.keymap.set({ "n", "v" }, "<leader>ab", function()
+	require("agentic").add_selection_or_file_to_context()
+end, { desc = "Add file or selection to Agentic" })
+vim.keymap.set("v", "<leader>as", function()
+	require("agentic").add_selection()
+end, { desc = "Send selection to Agentic" })
+
+-- Hunk stays in a bottom split so Agentic remains visible.
+-- Hide the window instead of quitting the TUI, or the daemon session dies.
+local hunk = { bufnr = nil, winid = nil }
+
+local function hunk_job_alive()
+	if not hunk.bufnr or not vim.api.nvim_buf_is_valid(hunk.bufnr) then
+		return false
+	end
+	local job = vim.b[hunk.bufnr].terminal_job_id
+	return job ~= nil and vim.fn.jobwait({ job }, 0)[1] == -1
+end
+
+local function hunk_hide()
+	if hunk.winid and vim.api.nvim_win_is_valid(hunk.winid) then
+		vim.api.nvim_win_hide(hunk.winid)
+	end
+	hunk.winid = nil
+end
+
+local function hunk_editor_win()
+	for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+		local buf = vim.api.nvim_win_get_buf(win)
+		local ft = vim.bo[buf].filetype
+		if
+			ft ~= "neo-tree"
+			and not vim.startswith(ft, "Agentic")
+			and vim.bo[buf].buftype ~= "terminal"
+		then
+			return win
+		end
+	end
+	return vim.api.nvim_get_current_win()
+end
+
+vim.keymap.set("n", "<leader>D", function()
+	if hunk.winid and vim.api.nvim_win_is_valid(hunk.winid) then
+		hunk_hide()
+		return
+	end
+
+	if hunk_job_alive() then
+		vim.api.nvim_set_current_win(hunk_editor_win())
+		vim.cmd("botright split")
+		hunk.winid = vim.api.nvim_get_current_win()
+		vim.api.nvim_win_set_buf(hunk.winid, hunk.bufnr)
+		vim.api.nvim_win_set_height(hunk.winid, math.max(12, math.floor(vim.o.lines * 0.4)))
+		vim.cmd("startinsert")
+		return
+	end
+
+	local root = vim.fs.root(0, ".git") or vim.fn.getcwd()
+	vim.api.nvim_set_current_win(hunk_editor_win())
+	vim.cmd("botright split")
+	hunk.winid = vim.api.nvim_get_current_win()
+	vim.cmd("lcd " .. vim.fn.fnameescape(root))
+	vim.cmd("terminal hunk diff")
+	hunk.bufnr = vim.api.nvim_get_current_buf()
+	vim.bo[hunk.bufnr].bufhidden = "hide"
+	vim.api.nvim_win_set_height(hunk.winid, math.max(12, math.floor(vim.o.lines * 0.4)))
+	vim.keymap.set("t", "q", function()
+		vim.cmd("stopinsert")
+		hunk_hide()
+	end, { buffer = hunk.bufnr, desc = "Hide Hunk (keep session)" })
+	vim.keymap.set("t", "<C-q>", function()
+		vim.cmd("stopinsert")
+		hunk_hide()
+	end, { buffer = hunk.bufnr, desc = "Hide Hunk (keep session)" })
+	vim.api.nvim_create_autocmd("TermClose", {
+		buffer = hunk.bufnr,
+		once = true,
+		callback = function()
+			hunk.bufnr = nil
+			hunk.winid = nil
+		end,
+	})
+	vim.cmd("startinsert")
+end, { desc = "Toggle Hunk review split" })

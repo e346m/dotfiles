@@ -40,6 +40,7 @@
     roc
     yazi
     super
+    hunk
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -273,6 +274,8 @@
     defaultEditor = true;
     viAlias = true;
     vimAlias = true;
+    # Avoid neovim-ruby-env `ri` picking up ~/.local/share/gem (Ruby 3.3.8 vs 3.3.10).
+    withRuby = false;
     plugins =
       with pkgs.vimPlugins;
       [
@@ -291,12 +294,16 @@
           p.hcl
           p.cpp
           p.roc
+          p.ruby
+          p.embedded_template
           # format
           p.yaml
           p.json
           p.toml
           p.vue
           p.glimmer
+          p.markdown
+          p.markdown_inline
         ]))
 
         nvim-lspconfig
@@ -307,39 +314,21 @@
         nvim-lint
         conform-nvim
 
-        #snippet
+        # snippet (user snippet files; LSP snippets use builtin vim.snippet)
         nvim-snippy
-
-        #cmp
-        nvim-cmp
-        cmp-nvim-lsp
-        cmp-buffer
-        cmp-path
-        cmp-cmdline
-        cmp-snippy
-
-        # lsp
-        nvim-lspconfig
 
         #live preview
         markdown-preview-nvim
         bracey-vim
 
-        # 必要な依存関係
-        dressing-nvim
-        plenary-nvim
+        nvim-web-devicons
         nui-nvim
-        nvim-cmp # オプショナル: コマンド補完用
-        nvim-web-devicons # オプショナル: アイコン表示用
-        img-clip-nvim # オプショナル: 画像貼り付け機能用
-        render-markdown-nvim # オプショナル: マークダウンレンダリング用
-
-        # Better terminal experience for Claude Code
-        snacks-nvim
+        neo-tree-nvim
+        dropbar-nvim
+        render-markdown-nvim
       ]
       ++ [
-        pkgs.old.vimPlugins.vim-fern
-        pkgs.unstable.vimPlugins.claudecode-nvim
+        pkgs.agentic-nvim
       ];
 
     extraLuaConfig = lib.fileContents ../init.lua;
@@ -359,6 +348,22 @@
       pyright
       htmx-lsp
       roc-ls
+      vscode-langservers-extracted
+      prettierd
+      nodePackages.prettier
+      nodePackages.graphql-language-service-cli
+      hunk
+      # Isolate from ~/.local/share/gem (Ruby 3.3.10 .so vs nix 3.3.8) and skip
+      # ruby-lsp's composed bundle install (writes into the nix store).
+      (writeShellScriptBin "ruby-lsp" ''
+        cache="''${XDG_CACHE_HOME:-$HOME/.cache}/ruby-lsp-nix"
+        mkdir -p "$cache/gems"
+        export GEM_HOME="$cache/gems"
+        export GEM_PATH="$cache/gems"
+        export BUNDLE_USER_HOME="$cache/bundle"
+        export BUNDLE_GEMFILE="''${BUNDLE_GEMFILE:-skip}"
+        exec ${lib.getExe ruby-lsp} "$@"
+      '')
     ];
   };
 

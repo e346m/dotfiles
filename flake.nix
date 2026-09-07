@@ -15,6 +15,7 @@
     mymate.url = "github:upsidr/mymate";
     whisrs.url = "github:y0sif/whisrs";
     herdr.url = "github:herdrdev/herdr/v0.8.2";
+    hunk.url = "github:modem-dev/hunk";
   };
 
   outputs =
@@ -28,6 +29,7 @@
       mymate,
       whisrs,
       herdr,
+      hunk,
       ...
     }:
     let
@@ -41,20 +43,26 @@
       };
       overlay-custom = final: prev: {
         claude-code = prev.callPackage (./. + "/pkgs/claude-code.nix") { };
+        agentic-nvim = prev.callPackage (./. + "/pkgs/agentic-nvim.nix") { };
         antigravity = prev.callPackage (./. + "/pkgs/antigravity.nix") { };
         guard-hook = prev.callPackage (./. + "/pkgs/guard-hook.nix") { };
         googleworkspace-cli = prev.callPackage (./. + "/pkgs/googleworkspace-cli.nix") { };
         tsm = prev.callPackage (./. + "/pkgs/tsm.nix") { };
         llama-diffusion = prev.callPackage (./. + "/pkgs/llama-diffusion.nix") { };
         cursor-cli = (import unstable { inherit (prev) system; config.allowUnfree = true; }).cursor-cli;
+        code-cursor = (import unstable { inherit (prev) system; config.allowUnfree = true; }).code-cursor;
         ghostty = unstable.legacyPackages.${prev.system}.ghostty;
         yazi = unstable.legacyPackages.${prev.system}.yazi;
+        neovim = unstable.legacyPackages.${prev.system}.neovim;
+        neovim-unwrapped = unstable.legacyPackages.${prev.system}.neovim-unwrapped;
+        vimPlugins = unstable.legacyPackages.${prev.system}.vimPlugins;
         mcp-grafana = unstable.legacyPackages.${prev.system}.mcp-grafana;
         roc = roc.packages.${prev.system}.cli;
         roc-ls = roc.packages.${prev.system}.lang-server;
         mymate = mymate.packages.${prev.system}.default;
         whisrs = whisrs.packages.${prev.system}.default;
         herdr = herdr.packages.${prev.system}.default;
+        hunk = hunk.packages.${prev.system}.default;
         super = (import unstable { inherit (prev) system; config.allowUnfree = true; }).super;
       };
 
