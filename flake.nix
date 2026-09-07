@@ -47,6 +47,7 @@
         antigravity = prev.callPackage (./. + "/pkgs/antigravity.nix") { };
         guard-hook = prev.callPackage (./. + "/pkgs/guard-hook.nix") { };
         googleworkspace-cli = prev.callPackage (./. + "/pkgs/googleworkspace-cli.nix") { };
+        claude-latency = prev.callPackage (./. + "/pkgs/claude-latency.nix") { };
         tsm = prev.callPackage (./. + "/pkgs/tsm.nix") { };
         llama-diffusion = prev.callPackage (./. + "/pkgs/llama-diffusion.nix") { };
         cursor-cli = (import unstable { inherit (prev) system; config.allowUnfree = true; }).cursor-cli;
@@ -97,6 +98,7 @@
             allowUnfree
             ./modules/common.nix
             ./modules/mbp-m2.nix
+            ./modules/otel-collector.nix
           ];
         };
       };
