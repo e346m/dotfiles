@@ -50,7 +50,7 @@
         claude-latency = prev.callPackage (./. + "/pkgs/claude-latency.nix") { };
         tsm = prev.callPackage (./. + "/pkgs/tsm.nix") { };
         llama-diffusion = prev.callPackage (./. + "/pkgs/llama-diffusion.nix") { };
-        cursor-cli = (import unstable { inherit (prev) system; config.allowUnfree = true; }).cursor-cli;
+        cursor-cli = prev.callPackage (./. + "/pkgs/cursor-cli.nix") { };
         code-cursor = (import unstable { inherit (prev) system; config.allowUnfree = true; }).code-cursor;
         ghostty = unstable.legacyPackages.${prev.system}.ghostty;
         yazi = unstable.legacyPackages.${prev.system}.yazi;
