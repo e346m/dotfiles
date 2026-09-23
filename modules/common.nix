@@ -34,7 +34,6 @@
     llama-diffusion
     claude-code
     googleworkspace-cli
-    mymate
     graphite-cli
     harlequin
     roc

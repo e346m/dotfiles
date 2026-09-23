@@ -12,10 +12,6 @@
     };
     utils.url = "github:numtide/flake-utils";
     roc.url = "github:roc-lang/roc";
-    mymate.url = "github:upsidr/mymate";
-    whisrs.url = "github:y0sif/whisrs";
-    herdr.url = "github:herdrdev/herdr/v0.8.2";
-    hunk.url = "github:modem-dev/hunk";
   };
 
   outputs =
@@ -26,10 +22,6 @@
       old-nixpkgs,
       unstable,
       roc,
-      mymate,
-      whisrs,
-      herdr,
-      hunk,
       ...
     }:
     let
@@ -39,7 +31,7 @@
         old = old-nixpkgs.legacyPackages.${prev.system};
       };
       overlay-unstable = final: prev: {
-        unstable = unstable.legacyPackages.${prev.system};
+        unstable = import unstable { inherit (prev) system; config.allowUnfree = true; };
       };
       overlay-custom = final: prev: {
         claude-code = prev.callPackage (./. + "/pkgs/claude-code.nix") { };
@@ -51,21 +43,19 @@
         tsm = prev.callPackage (./. + "/pkgs/tsm.nix") { };
         llama-diffusion = prev.callPackage (./. + "/pkgs/llama-diffusion.nix") { };
         cursor-cli = prev.callPackage (./. + "/pkgs/cursor-cli.nix") { };
-        code-cursor = (import unstable { inherit (prev) system; config.allowUnfree = true; }).code-cursor;
-        codex = unstable.legacyPackages.${prev.system}.codex;
-        ghostty = unstable.legacyPackages.${prev.system}.ghostty;
-        yazi = unstable.legacyPackages.${prev.system}.yazi;
-        neovim = unstable.legacyPackages.${prev.system}.neovim;
-        neovim-unwrapped = unstable.legacyPackages.${prev.system}.neovim-unwrapped;
-        vimPlugins = unstable.legacyPackages.${prev.system}.vimPlugins;
-        mcp-grafana = unstable.legacyPackages.${prev.system}.mcp-grafana;
+        code-cursor = prev.unstable.code-cursor;
+        codex = prev.unstable.codex;
+        ghostty = prev.unstable.ghostty;
+        yazi = prev.unstable.yazi;
+        neovim = prev.unstable.neovim;
+        neovim-unwrapped = prev.unstable.neovim-unwrapped;
+        vimPlugins = prev.unstable.vimPlugins;
+        mcp-grafana = prev.unstable.mcp-grafana;
         roc = roc.packages.${prev.system}.cli;
         roc-ls = roc.packages.${prev.system}.lang-server;
-        mymate = mymate.packages.${prev.system}.default;
-        whisrs = whisrs.packages.${prev.system}.default;
-        herdr = herdr.packages.${prev.system}.default;
-        hunk = hunk.packages.${prev.system}.default;
-        super = (import unstable { inherit (prev) system; config.allowUnfree = true; }).super;
+        herdr = prev.callPackage (./. + "/pkgs/herdr.nix") { };
+        hunk = prev.callPackage (./. + "/pkgs/hunk.nix") { };
+        super = prev.unstable.super;
       };
 
       allowUnfree = (
