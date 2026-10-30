@@ -23,6 +23,9 @@
       lima
       tsm
       ghostty
+      # Upstream names the Linux CLI orca-ide so it does not shadow GNOME Orca.
+      orca-ide
+      zed-editor
       hicolor-icon-theme
       devcontainer
     ];

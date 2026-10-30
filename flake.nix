@@ -46,6 +46,8 @@
         code-cursor = prev.unstable.code-cursor;
         codex = prev.unstable.codex;
         ghostty = prev.unstable.ghostty;
+        zed-editor = prev.unstable.zed-editor;
+        orca-ide = prev.callPackage (./. + "/pkgs/orca-ide.nix") { };
         yazi = prev.unstable.yazi;
         neovim = prev.unstable.neovim;
         neovim-unwrapped = prev.unstable.neovim-unwrapped;
