@@ -8,25 +8,25 @@
 let
   inherit (stdenv) hostPlatform;
   # Version slug from https://cursor.com/install (lab channel).
-  slug = "2026.10.22-27dcf5f";
+  slug = "2026.11.05-86047df";
   sources = {
     x86_64-linux = fetchurl {
       url = "https://downloads.cursor.com/lab/${slug}/linux/x64/agent-cli-package.tar.gz";
-      hash = "sha256-hSlpRORgCoPEt2T1eNFQK/nEFtsgDTOlk+jz7Kv9wpQ=";
+      hash = "sha256-Fwt3eGy/TJMGTWT/8StxoXi5aHMFYcZK/C6OdSU1RC4=";
     };
     aarch64-linux = fetchurl {
       url = "https://downloads.cursor.com/lab/${slug}/linux/arm64/agent-cli-package.tar.gz";
-      hash = "sha256-IqNt+XIIMGaMzU1wflGQIEq5yKDvsvBozJFIlfgE0+w=";
+      hash = "sha256-ExVUv9v2g9jr/vg6K7RqxOXQYPGYcRBAsH7QY8JHGHE=";
     };
     aarch64-darwin = fetchurl {
       url = "https://downloads.cursor.com/lab/${slug}/darwin/arm64/agent-cli-package.tar.gz";
-      hash = "sha256-L1sKPdX7lRzs/6yBOGfYoI2BDlmDfVn9XxLWm5IjmNc=";
+      hash = "sha256-Z4R+R+Pr0ytkw/tObzbUdfGXG3bgM7DtbJ4Bo8G0QNc=";
     };
   };
 in
 stdenv.mkDerivation {
   pname = "cursor-cli";
-  version = "0-unstable-2026-10-22";
+  version = "0-unstable-2026-11-05";
 
   src = sources.${hostPlatform.system} or (throw "Unsupported platform: ${hostPlatform.system}");
 
